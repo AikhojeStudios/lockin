@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#000000">
+<title>Circuit</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    background: #000;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    height: 100%;
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  #app { height: 100vh; height: 100dvh; display: flex; flex-direction: column; }
+
+  /* Home Screen */
+  .home { padding: 20px; overflow-y: auto; height: 100%; }
+  .home h1 { font-size: 32px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.5px; }
+  .home .subtitle { color: #888; margin-bottom: 24px; font-size: 15px; }
+  .circuit-card {
+    background: #1c1c1e;
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+  .circuit-card:active { transform: scale(0.98); }
+  .circuit-card h2 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+  .circuit-card .meta { color: #888; font-size: 13px; margin-bottom: 8px; }
+  .circuit-card .description { color: #ccc; font-size: 14px; line-height: 1.4; }
+  .difficulty {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-right: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .diff-beginner { background: #30d158; color: #000; }
+  .diff-intermediate { background: #ff9f0a; color: #000; }
+  .diff-advanced { background: #ff453a; color: #fff; }
+
+  /* Preview Screen */
+  .preview {
+    padding: 20px;
+    overflow-y: auto;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .back-btn {
+    background: none;
+    color: #0a84ff;
+    border: none;
+    font-size: 17px;
+    padding: 0;
+    margin-bottom: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .preview h1 { font-size: 28px; margin-bottom: 8px; letter-spacing: -0.5px; }
+  .preview .stats {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+    color: #888;
+    font-size: 14px;
+  }
+  .preview .description {
+    background: #1c1c1e;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    line-height: 1.5;
+    font-size: 15px;
+  }
+  .exercise-list {
+    margin-bottom: 20px;
+    flex: 1;
+  }
+  .exercise-list h3 {
+    font-size: 13px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .exercise-item {
+    background: #1c1c1e;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+  }
+  .exercise-item .duration {
+    color: #888;
+    font-size: 13px;
+  }
+  .start-btn {
+    background: #0a84ff;
+    color: white;
+    border: none;
+    padding: 18px;
+    border-radius: 14px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+  }
+  .start-btn:active { opacity: 0.8; }
+
+  /* Workout Screen */
+  .workout {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    text-align: center;
+  }
+  .workout-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .workout-header .round-info {
+    color: #888;
+    font-size: 14px;
+  }
+  .workout-header .quit-btn {
+    background: none;
+    color: #ff453a;
+    border: none;
+    font-size: 15px;
+    cursor: pointer;
+  }
+  .progress-bar {
+    height: 4px;
+    background: #333;
+    border-radius: 2px;
+    margin-bottom: 30px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: #0a84ff;
+    transition: width 0.3s;
+  }
+  .exercise-name {
+    font-size: 42px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    letter-spacing: -1px;
+    line-height: 1.1;
+  }
+  .exercise-type {
+    color: #888;
+    font-size: 16px;
+    margin-bottom: 40px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  .timer-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .timer-circle {
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    background: #1c1c1e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 30px;
+  }
+  .timer-circle svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: rotate(-90deg);
+  }
+  .timer-text {
+    font-size: 82px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -3px;
+    z-index: 1;
+  }
+  .timer-text.rest { color: #30d158; }
+  .timer-text.work { color: #fff; }
+  .timer-text.warmup { color: #ff9f0a; }
+  .next-up {
+    color: #888;
+    font-size: 15px;
+    margin-bottom: 20px;
+  }
+  .next-up span { color: #fff; font-weight: 600; }
+  .workout-controls {
+    display: flex;
+    gap: 12px;
+  }
+  .control-btn {
+    flex: 1;
+    background: #1c1c1e;
+    color: white;
+    border: none;
+    padding: 16px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .control-btn.primary {
+    background: #0a84ff;
+  }
+  .control-btn:active { opacity: 0.7; }
+
+  /* Complete Screen */
+  .complete {
+    padding: 30px 20px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .complete .celebration {
+    font-size: 64px;
+    margin-bottom: 20px;
+  }
+  .complete h1 {
+    font-size: 32px;
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+  }
+  .complete .subtitle {
+    color: #888;
+    margin-bottom: 30px;
+    font-size: 16px;
+  }
+  .complete-stats {
+    background: #1c1c1e;
+    padding: 20px;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 320px;
+    margin-bottom: 30px;
+  }
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 16px;
+  }
+  .stat-row .label { color: #888; }
+  .stat-row .value { font-weight: 600; }
+  .done-btn {
+    background: #0a84ff;
+    color: white;
+    border: none;
+    padding: 16px 40px;
+    border-radius: 14px;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .hidden { display: none !important; }
+
+  /* Watch mode adjustments */
+  @media (max-width: 250px) {
+    .exercise-name { font-size: 24px; }
+    .timer-text { font-size: 48px; }
+    .timer-circle { width: 160px; height: 160px; }
+  }
+
+  /* Pulsing animation for last 3 seconds */
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+  .timer-text.pulse {
+    animation: pulse 0.5s ease-in-out infinite;
+    color: #ff453a;
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+// ============================================================
+// CIRCUIT DEFINITIONS
+// ============================================================
+
+const CIRCUITS = [
+  {
+    id: 'soccer-prep',
+    name: 'Soccer Prep',
+    difficulty: 'intermediate',
+    duration: 35,
+    description: 'Mimics soccer\'s interval nature. Full body engagement with cardio + strength. Perfect for maintaining sport fitness.',
+    rounds: 4,
+    warmup: { name: 'Warm-Up', duration: 60, type: 'warmup' },
+    exercises: [
+      { name: 'Jump Rope', detail: 'Moderate pace', duration: 45, type: 'work' },
+      { name: 'Rest', duration: 15, type: 'rest' },
+      { name: 'Push-Ups', detail: '10 reps', duration: 30, type: 'work' },
+      { name: 'Rest', duration: 15, type: 'rest' },
+      { name: 'Jump Rope', detail: 'Fast pace', duration: 45, type: 'work' },
+      { name: 'Rest', duration: 15, type: 'rest' },
+      { name: 'Bodyweight Squats', detail: '15 reps', duration: 30, type: 'work' },
+      { name: 'Rest', duration: 15, type: 'rest' },
+      { name: 'Jump Rope', detail: 'Moderate pace', duration: 45, type: 'work' },
+      { name: 'Rest', duration: 15, type: 'rest' },
+      { name: 'Plank', duration: 30, type: 'work' },
+      { name: 'Round Rest', duration: 60, type: 'rest' },
+    ],
+  },
+  {
+    id: 'mountain-climber',
+    name: 'Mountain Climber Special',
+    difficulty: 'intermediate',
+    duration: 30,
+    description: 'Mountain climbers + core + full body. Great fat burner using multiple energy systems.',
+    rounds: 5,
+    warmup: { name: 'Warm-Up', duration: 60, type: 'warmup' },
+    exercises: [
+      { name: 'Mountain Climbers', detail: 'Fast pace', duration: 30, type: 'work' },
+      { name: 'Plank Hold', duration: 30, type: 'work' },
+      { name: 'Mountain Climbers', detail: 'Moderate pace', duration: 30, type: 'work' },
+      { name: 'Push-Ups', detail: 'Max reps', duration: 30, type: 'work' },
+      { name: 'Rest', duration: 30, type: 'rest' },
+      { name: 'Jumping Jacks', duration: 30, type: 'work' },
+      { name: 'Bodyweight Squats', duration: 30, type: 'work' },
+      { name: 'Round Rest', duration: 60, type: 'rest' },
+    ],
+  },
+  {
+    id: 'emom-full-body',
+    name: 'EMOM Full Body',
+    difficulty: 'intermediate',
+    duration: 30,
+    description: 'Every Minute On the Minute. Consistent stimulus, self-regulating intensity. Great for measuring progress.',
+    rounds: 8,
+    warmup: { name: 'Warm-Up', duration: 60, type: 'warmup' },
+    exercises: [
+      { name: 'Push-Ups + Squats', detail: '10 push-ups, 10 squats', duration: 60, type: 'work' },
+      { name: 'Jump Rope + Plank', detail: '30s jump rope, 30s plank', duration: 60, type: 'work' },
+      { name: 'Pull-Ups + Sit-Ups', detail: '5 pull-ups, 15 sit-ups', duration: 60, type: 'work' },
+      { name: 'Mountain Climbers + Lunges', detail: '30s climbers, 10 lunges', duration: 60, type: 'work' },
+    ],
+  },
+  {
+    id: 'push-pull-cardio',
+    name: 'Push / Pull / Cardio',
+    difficulty: 'intermediate',
+    duration: 40,
+    description: 'Complete muscle group targeting with sustained heart rate. Great for muscle building AND cardio.',
+    rounds: 4,
+    warmup: { name: 'Warm-Up', duration: 60, type: 'warmup' },
+    exercises: [
+      { name: 'Push-Ups', detail: '12 reps', duration: 40, type: 'work' },
+      { name: 'Jump Rope', duration: 30, type: 'work' },
+      { name: 'Tricep Dips', detail: '12 reps', duration: 40, type: 'work' },
+      { name: 'Mountain Climbers', duration: 30, type: 'work' },
+      { name: 'Rest', duration: 30, type: 'rest' },
+      { name: 'Pull-Ups', detail: '6-8 reps', duration: 40, type: 'work' },
+      { name: 'Jump Rope', duration: 30, type: 'work' },
+      { name: 'Rows', detail: '15 reps (band/DB)', duration: 40, type: 'work' },
+      { name: 'High Knees', duration: 30, type: 'work' },
+      { name: 'Rest', duration: 30, type: 'rest' },
+      { name: 'Squats', detail: '20 reps', duration: 40, type: 'work' },
+      { name: 'Jump Rope', duration: 30, type: 'work' },
+      { name: 'Lunges', detail: '20 total', duration: 40, type: 'work' },
+      { name: 'Jumping Jacks', duration: 30, type: 'work' },
+      { name: 'Round Rest', duration: 45, type: 'rest' },
+    ],
+  },
+  {
+    id: 'five-min-blaster',
+    name: '5-Minute Blaster',
+    difficulty: 'advanced',
+    duration: 25,
+    description: 'Five 5-minute rounds. Measurable (count total rounds). Push yourself each round.',
+    rounds: 5,
+    warmup: { name: 'Warm-Up', duration: 60, type: 'warmup' },
+    exercises: [
+      { name: 'Push-Ups', detail: '10 reps', duration: 60, type: 'work' },
+      { name: 'Squats', detail: '10 reps', duration: 60, type: 'work' },
+      { name: 'Sit-Ups', detail: '10 reps', duration: 60, type: 'work' },
+      { name: 'Jump Rope', duration: 60, type: 'work' },
+      { name: 'Repeat', detail: 'Keep going', duration: 60, type: 'work' },
+      { name: 'Round Rest', duration: 60, type: 'rest' },
+    ],
+  },
+  {
+    id: 'tabata',
+    name: 'Tabata Complex',
+    difficulty: 'advanced',
+    duration: 24,
+    description: 'Research-proven for VO2 max. Maximum intensity per minute with excellent afterburn effect.',
+    rounds: 1,
+    warmup: { name: 'Warm-Up', duration: 60, type: 'warmup' },
+    exercises: [
+      // Tabata 1: Jump Rope
+      { name: 'Jump Rope', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Jump Rope', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Jump Rope', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Jump Rope', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Jump Rope', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Jump Rope', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Jump Rope', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Jump Rope', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Long Rest', duration: 60, type: 'rest' },
+      // Tabata 2: Push-Ups
+      { name: 'Push-Ups', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Push-Ups', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Push-Ups', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Push-Ups', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Push-Ups', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Push-Ups', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Push-Ups', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Push-Ups', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Long Rest', duration: 60, type: 'rest' },
+      // Tabata 3: Squats
+      { name: 'Squats', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Squats', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Squats', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Squats', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Squats', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Squats', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Squats', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Squats', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Long Rest', duration: 60, type: 'rest' },
+      // Tabata 4: Mountain Climbers
+      { name: 'Mountain Climbers', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Mountain Climbers', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Mountain Climbers', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Mountain Climbers', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Mountain Climbers', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Mountain Climbers', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Mountain Climbers', detail: 'ALL OUT', duration: 20, type: 'work' },
+      { name: 'Rest', duration: 10, type: 'rest' },
+      { name: 'Mountain Climbers', detail: 'ALL OUT', duration: 20, type: 'work' },
+    ],
+  },
+  {
+    id: 'bodyweight-amrap',
+    name: 'Bodyweight AMRAP',
+    difficulty: 'intermediate',
+    duration: 30,
+    description: 'As Many Rounds As Possible in 30 min. No equipment. Simple to remember, track rounds completed.',
+    rounds: 10,
+    warmup: { name: 'Warm-Up', duration: 60, type: 'warmup' },
+    exercises: [
+      { name: 'Push-Ups', detail: '10 reps', duration: 45, type: 'work' },
+      { name: 'Squats', detail: '15 reps', duration: 45, type: 'work' },
+      { name: 'Mountain Climbers', detail: '20 reps', duration: 30, type: 'work' },
+      { name: 'Plank', duration: 30, type: 'work' },
+      { name: 'Lunges', detail: '10 total', duration: 30, type: 'work' },
+      { name: 'Rest', duration: 30, type: 'rest' },
+    ],
+  },
+  {
+    id: 'quick-15',
+    name: 'Quick 15',
+    difficulty: 'beginner',
+    duration: 15,
+    description: 'Short and effective. Perfect when time is tight but you still want a real workout.',
+    rounds: 3,
+    warmup: { name: 'Warm-Up', duration: 45, type: 'warmup' },
+    exercises: [
+      { name: 'Jumping Jacks', duration: 45, type: 'work' },
+      { name: 'Push-Ups', detail: '10 reps', duration: 45, type: 'work' },
+      { name: 'Squats', detail: '15 reps', duration: 45, type: 'work' },
+      { name: 'Plank', duration: 30, type: 'work' },
+      { name: 'Rest', duration: 45, type: 'rest' },
+    ],
+  },
+  {
+    id: 'core-crusher',
+    name: 'Core Crusher',
+    difficulty: 'intermediate',
+    duration: 20,
+    description: 'Focused abs and core work. Endurance-based movements to build a strong midsection.',
+    rounds: 3,
+    warmup: { name: 'Warm-Up', duration: 45, type: 'warmup' },
+    exercises: [
+      { name: 'Leg Raises', detail: '15 reps', duration: 45, type: 'work' },
+      { name: 'Plank', duration: 60, type: 'work' },
+      { name: 'Bicycle Crunches', detail: '20 total', duration: 45, type: 'work' },
+      { name: 'Side Plank Right', duration: 30, type: 'work' },
+      { name: 'Side Plank Left', duration: 30, type: 'work' },
+      { name: 'Hollow Hold', duration: 30, type: 'work' },
+      { name: 'Mountain Climbers', duration: 45, type: 'work' },
+      { name: 'Rest', duration: 45, type: 'rest' },
+    ],
+  },
+];
+
+// ============================================================
+// APP STATE
+// ============================================================
+
+let state = {
+  screen: 'home', // home, preview, workout, complete
+  circuit: null,
+  currentRound: 1,
+  currentExerciseIndex: 0,
+  timeRemaining: 0,
+  totalTimeRemaining: 0,
+  isPaused: false,
+  timerInterval: null,
+  workoutStartTime: null,
+  exercises: [], // flattened exercise list for current workout
+  wakeLock: null,
+};
+
+// ============================================================
+// AUDIO CUES
+// ============================================================
+
+let audioContext = null;
+
+function playBeep(frequency = 800, duration = 0.15, volume = 0.3) {
+  try {
+    if (!audioContext) {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    oscillator.frequency.value = frequency;
+    oscillator.type = 'sine';
+    gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + duration);
+  } catch (e) {
+    console.log('Audio not available');
+  }
+}
+
+function playCountdownBeep() { playBeep(800, 0.1, 0.3); }
+function playStartBeep() { playBeep(1000, 0.3, 0.4); }
+function playRestBeep() { playBeep(500, 0.2, 0.3); }
+function playCompleteBeep() {
+  playBeep(600, 0.15, 0.4);
+  setTimeout(() => playBeep(800, 0.15, 0.4), 150);
+  setTimeout(() => playBeep(1000, 0.4, 0.4), 300);
+}
+
+function vibrate(pattern) {
+  if (navigator.vibrate) navigator.vibrate(pattern);
+}
+
+// ============================================================
+// WAKE LOCK (Keep screen on)
+// ============================================================
+
+async function requestWakeLock() {
+  try {
+    if ('wakeLock' in navigator) {
+      state.wakeLock = await navigator.wakeLock.request('screen');
+    }
+  } catch (e) {
+    console.log('Wake lock not available');
+  }
+}
+
+function releaseWakeLock() {
+  if (state.wakeLock) {
+    state.wakeLock.release().catch(() => {});
+    state.wakeLock = null;
+  }
+}
+
+document.addEventListener('visibilitychange', async () => {
+  if (state.wakeLock !== null && document.visibilityState === 'visible' && state.screen === 'workout') {
+    await requestWakeLock();
+  }
+});
+
+// ============================================================
+// SCREENS
+// ============================================================
+
+function renderHome() {
+  const app = document.getElementById('app');
+  app.innerHTML = `
+    <div class="home">
+      <h1>Circuit</h1>
+      <p class="subtitle">Pick a workout to start</p>
+      ${CIRCUITS.map(c => `
+        <div class="circuit-card" onclick="selectCircuit('${c.id}')">
+          <h2>${c.name}</h2>
+          <div class="meta">
+            <span class="difficulty diff-${c.difficulty}">${c.difficulty}</span>
+            ${c.duration} min • ${c.rounds} ${c.rounds === 1 ? 'round' : 'rounds'}
+          </div>
+          <div class="description">${c.description}</div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function selectCircuit(id) {
+  state.circuit = CIRCUITS.find(c => c.id === id);
+  state.screen = 'preview';
+  renderPreview();
+}
+
+function renderPreview() {
+  const c = state.circuit;
+  const app = document.getElementById('app');
+  app.innerHTML = `
+    <div class="preview">
+      <button class="back-btn" onclick="goHome()">‹ Back</button>
+      <h1>${c.name}</h1>
+      <div class="stats">
+        <span>⏱ ${c.duration} min</span>
+        <span>🔁 ${c.rounds} ${c.rounds === 1 ? 'round' : 'rounds'}</span>
+        <span>💪 ${c.difficulty}</span>
+      </div>
+      <div class="description">${c.description}</div>
+      <div class="exercise-list">
+        <h3>Round Structure</h3>
+        ${c.exercises.map(ex => `
+          <div class="exercise-item">
+            <div>
+              <div>${ex.name}${ex.detail ? ` <span style="color:#888;font-size:13px">• ${ex.detail}</span>` : ''}</div>
+            </div>
+            <div class="duration">${ex.duration}s</div>
+          </div>
+        `).join('')}
+      </div>
+      <button class="start-btn" onclick="startWorkout()">Start Workout</button>
+    </div>
+  `;
+}
+
+function goHome() {
+  stopTimer();
+  releaseWakeLock();
+  state.screen = 'home';
+  state.circuit = null;
+  renderHome();
+}
+
+// ============================================================
+// WORKOUT
+// ============================================================
+
+function startWorkout() {
+  // Prime audio context (needs user interaction)
+  playBeep(1, 0.01, 0);
+
+  requestWakeLock();
+
+  const c = state.circuit;
+  state.exercises = [];
+
+  // Add warmup
+  if (c.warmup) {
+    state.exercises.push({ ...c.warmup, round: 0, isWarmup: true });
+  }
+
+  // Build full exercise list with all rounds
+  for (let r = 1; r <= c.rounds; r++) {
+    c.exercises.forEach(ex => {
+      state.exercises.push({ ...ex, round: r });
+    });
+  }
+
+  state.currentExerciseIndex = 0;
+  state.currentRound = 1;
+  state.timeRemaining = state.exercises[0].duration;
+  state.totalTimeRemaining = state.exercises.reduce((sum, ex) => sum + ex.duration, 0);
+  state.isPaused = false;
+  state.workoutStartTime = Date.now();
+  state.screen = 'workout';
+
+  renderWorkout();
+  startTimer();
+  playStartBeep();
+}
+
+function startTimer() {
+  if (state.timerInterval) clearInterval(state.timerInterval);
+  state.timerInterval = setInterval(() => {
+    if (state.isPaused) return;
+    state.timeRemaining--;
+    state.totalTimeRemaining--;
+
+    // Audio cues for last 3 seconds
+    if (state.timeRemaining <= 3 && state.timeRemaining > 0) {
+      playCountdownBeep();
+    }
+
+    if (state.timeRemaining <= 0) {
+      nextExercise();
+    } else {
+      updateTimerDisplay();
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  if (state.timerInterval) {
+    clearInterval(state.timerInterval);
+    state.timerInterval = null;
+  }
+}
+
+function nextExercise() {
+  state.currentExerciseIndex++;
+
+  if (state.currentExerciseIndex >= state.exercises.length) {
+    completeWorkout();
+    return;
+  }
+
+  const nextEx = state.exercises[state.currentExerciseIndex];
+  state.currentRound = nextEx.round || state.currentRound;
+  state.timeRemaining = nextEx.duration;
+
+  // Different sounds for work vs rest
+  if (nextEx.type === 'rest') {
+    playRestBeep();
+    vibrate([100, 50, 100]);
+  } else {
+    playStartBeep();
+    vibrate([200]);
+  }
+
+  renderWorkout();
+}
+
+function togglePause() {
+  state.isPaused = !state.isPaused;
+  const pauseBtn = document.getElementById('pauseBtn');
+  if (pauseBtn) pauseBtn.textContent = state.isPaused ? 'Resume' : 'Pause';
+}
+
+function skipExercise() {
+  nextExercise();
+}
+
+function quitWorkout() {
+  if (confirm('End workout?')) {
+    stopTimer();
+    releaseWakeLock();
+    goHome();
+  }
+}
+
+function renderWorkout() {
+  const currentEx = state.exercises[state.currentExerciseIndex];
+  const nextEx = state.exercises[state.currentExerciseIndex + 1];
+  const c = state.circuit;
+
+  // Calculate progress
+  const totalDuration = state.exercises.reduce((sum, ex) => sum + ex.duration, 0);
+  const progress = ((totalDuration - state.totalTimeRemaining) / totalDuration) * 100;
+
+  const roundText = currentEx.isWarmup
+    ? 'Warm-Up'
+    : `Round ${state.currentRound} of ${c.rounds}`;
+
+  const timerClass = currentEx.type === 'rest' ? 'rest'
+    : currentEx.type === 'warmup' ? 'warmup'
+    : 'work';
+
+  const app = document.getElementById('app');
+  app.innerHTML = `
+    <div class="workout">
+      <div class="workout-header">
+        <div class="round-info">${roundText}</div>
+        <button class="quit-btn" onclick="quitWorkout()">End</button>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: ${progress}%"></div>
+      </div>
+      <div class="exercise-name">${currentEx.name}</div>
+      <div class="exercise-type">${currentEx.detail || currentEx.type}</div>
+      <div class="timer-container">
+        <div class="timer-circle">
+          <div class="timer-text ${timerClass}" id="timerText">${formatTime(state.timeRemaining)}</div>
+        </div>
+        ${nextEx ? `<div class="next-up">Next: <span>${nextEx.name}</span></div>` : ''}
+      </div>
+      <div class="workout-controls">
+        <button class="control-btn" id="pauseBtn" onclick="togglePause()">${state.isPaused ? 'Resume' : 'Pause'}</button>
+        <button class="control-btn primary" onclick="skipExercise()">Skip</button>
+      </div>
+    </div>
+  `;
+}
+
+function updateTimerDisplay() {
+  const timerText = document.getElementById('timerText');
+  if (timerText) {
+    timerText.textContent = formatTime(state.timeRemaining);
+    if (state.timeRemaining <= 3 && state.timeRemaining > 0) {
+      timerText.classList.add('pulse');
+    } else {
+      timerText.classList.remove('pulse');
+    }
+  }
+  // Update progress bar
+  const totalDuration = state.exercises.reduce((sum, ex) => sum + ex.duration, 0);
+  const progress = ((totalDuration - state.totalTimeRemaining) / totalDuration) * 100;
+  const progressFill = document.querySelector('.progress-fill');
+  if (progressFill) progressFill.style.width = progress + '%';
+}
+
+function formatTime(seconds) {
+  if (seconds >= 60) {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  }
+  return seconds.toString();
+}
+
+function completeWorkout() {
+  stopTimer();
+  releaseWakeLock();
+  playCompleteBeep();
+  vibrate([200, 100, 200, 100, 200]);
+
+  const duration = Math.round((Date.now() - state.workoutStartTime) / 1000);
+  const minutes = Math.floor(duration / 60);
+  const seconds = duration % 60;
+
+  const app = document.getElementById('app');
+  app.innerHTML = `
+    <div class="complete">
+      <div class="celebration">🎉</div>
+      <h1>Workout Complete!</h1>
+      <div class="subtitle">${state.circuit.name}</div>
+      <div class="complete-stats">
+        <div class="stat-row">
+          <span class="label">Duration</span>
+          <span class="value">${minutes}:${seconds.toString().padStart(2, '0')}</span>
+        </div>
+        <div class="stat-row">
+          <span class="label">Rounds</span>
+          <span class="value">${state.circuit.rounds} / ${state.circuit.rounds}</span>
+        </div>
+        <div class="stat-row">
+          <span class="label">Difficulty</span>
+          <span class="value" style="text-transform:capitalize">${state.circuit.difficulty}</span>
+        </div>
+      </div>
+      <button class="done-btn" onclick="goHome()">Done</button>
+    </div>
+  `;
+  state.screen = 'complete';
+}
+
+// ============================================================
+// INIT
+// ============================================================
+
+renderHome();
+
+// Prevent accidental page leave during workout
+window.addEventListener('beforeunload', (e) => {
+  if (state.screen === 'workout') {
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
+</script>
+</body>
+</html>
