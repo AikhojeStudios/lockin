@@ -46,25 +46,57 @@
   }
   .voice-toggle.off .dot { background: #555; }
   .home .subtitle { color: #888; margin-bottom: 24px; font-size: 15px; }
+  .circuit-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
   .circuit-card {
     background: #1c1c1e;
     border-radius: 16px;
-    padding: 18px;
-    margin-bottom: 12px;
+    padding: 16px;
     cursor: pointer;
     transition: transform 0.1s;
+    display: flex;
+    flex-direction: column;
   }
   .circuit-card:active { transform: scale(0.98); }
-  .circuit-card h2 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
-  .circuit-card .meta { color: #888; font-size: 13px; margin-bottom: 8px; }
-  .circuit-card .description { color: #ccc; font-size: 14px; line-height: 1.4; }
+  .circuit-card h2 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+  }
+  .circuit-card .meta {
+    color: #888;
+    font-size: 12px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+  .circuit-card .meta-info {
+    display: block;
+    width: 100%;
+    margin-top: 4px;
+  }
+  .circuit-card .description {
+    color: #ccc;
+    font-size: 13px;
+    line-height: 1.4;
+    flex: 1;
+  }
   .difficulty {
     display: inline-block;
-    padding: 2px 8px;
-    border-radius: 6px;
-    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 5px;
+    font-size: 10px;
     font-weight: 600;
-    margin-right: 6px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -127,11 +159,10 @@
     display: inline-block;
     background: #ff453a;
     color: #fff;
-    padding: 3px 8px;
-    border-radius: 6px;
-    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 5px;
+    font-size: 10px;
     font-weight: 700;
-    margin-left: 8px;
     letter-spacing: 0.5px;
   }
   .exercise-list h3 {
@@ -763,16 +794,18 @@ function renderHome() {
         </button>
       </div>
       <p class="subtitle">Pick a workout to start</p>
+      <div class="circuit-grid">
       ${CIRCUITS.map(c => `
         <div class="circuit-card" onclick="selectCircuit('${c.id}')">
           <h2>${c.name}${c.amrap ? '<span class="amrap-badge">AMRAP</span>' : ''}</h2>
           <div class="meta">
             <span class="difficulty diff-${c.difficulty}">${c.difficulty}</span>
-            ${c.duration} min • ${c.rounds} ${c.rounds === 1 ? 'round' : 'rounds'}
+            <span class="meta-info">${c.duration} min • ${c.rounds} ${c.rounds === 1 ? 'round' : 'rounds'}</span>
           </div>
           <div class="description">${c.description}</div>
         </div>
       `).join('')}
+      </div>
     </div>
   `;
 }
