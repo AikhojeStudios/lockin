@@ -91,6 +91,135 @@
     line-height: 1.4;
     flex: 1;
   }
+
+  /* Split Card - tile size like other cards */
+  .split-card {
+    background: linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%);
+    border-radius: 16px;
+    padding: 16px;
+    cursor: pointer;
+    transition: transform 0.1s;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #333;
+  }
+  .split-card:active { transform: scale(0.98); }
+  .split-card h2 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+  .split-badge {
+    display: inline-block;
+    background: #0a84ff;
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 5px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .split-card .meta {
+    color: #888;
+    font-size: 12px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+  }
+  .split-card .description {
+    color: #ccc;
+    font-size: 13px;
+    line-height: 1.4;
+    flex: 1;
+  }
+
+  /* Split Day Screen */
+  .split-days {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+  .split-days-header {
+    padding: 20px 20px 0 20px;
+    background: #000;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .split-days-header h1 {
+    font-size: 24px;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .split-days-header .why {
+    background: #1c1c1e;
+    padding: 14px;
+    border-radius: 12px;
+    color: #ccc;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+  .split-days-body {
+    padding: 0 20px 20px 20px;
+    overflow-y: auto;
+    flex: 1;
+  }
+  .split-days-body h3 {
+    font-size: 13px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .day-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .day-card {
+    background: #1c1c1e;
+    border-radius: 14px;
+    padding: 16px;
+    cursor: pointer;
+    transition: transform 0.1s;
+    display: flex;
+    flex-direction: column;
+  }
+  .day-card:active { transform: scale(0.98); }
+  .day-card h2 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .day-card .meta {
+    color: #888;
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+  .day-card .description {
+    color: #ccc;
+    font-size: 13px;
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+  .day-card .why-mini {
+    color: #999;
+    font-size: 12px;
+    line-height: 1.4;
+    font-style: italic;
+    flex: 1;
+  }
   .difficulty {
     display: inline-block;
     padding: 2px 6px;
@@ -336,6 +465,89 @@
 <div id="app"></div>
 
 <script>
+// ============================================================
+// SPLIT WORKOUTS (Multi-day programs)
+// ============================================================
+// These are programs that contain multiple workout sessions (e.g. Push/Pull/Legs)
+
+const SPLITS = [
+  {
+    id: 'push-pull-legs',
+    name: 'Push / Pull / Legs',
+    difficulty: 'intermediate',
+    description: 'Classic 3-day muscle building split. Alternate between push, pull, and leg days for complete recovery and consistent gains.',
+    why: 'Each day targets different muscle groups so one recovers while another works. Best for building muscle without overtraining. Run it 3-6 days a week depending on recovery.',
+    days: [
+      {
+        id: 'push-day',
+        name: 'Push Day',
+        difficulty: 'intermediate',
+        duration: 35,
+        description: 'Chest, shoulders, triceps. All pushing movements.',
+        why: 'Targets everything you use to push weight away from you. Complementary muscles work together so you can hit them harder in one session.',
+        rounds: 3,
+        warmup: { name: 'Warm-Up', duration: 60, type: 'warmup' },
+        exercises: [
+          { name: 'Push-Ups', detail: '12-15 reps', duration: 60, type: 'work' },
+          { name: 'Rest', duration: 45, type: 'rest' },
+          { name: 'Diamond Push-Ups', detail: '8-12 reps', duration: 60, type: 'work' },
+          { name: 'Rest', duration: 45, type: 'rest' },
+          { name: 'Tricep Dips', detail: '10-15 reps', duration: 60, type: 'work' },
+          { name: 'Rest', duration: 45, type: 'rest' },
+          { name: 'Tricep Extensions', detail: '15 reps (band)', duration: 45, type: 'work' },
+          { name: 'Rest', duration: 30, type: 'rest' },
+          { name: 'Plank', detail: '45 seconds', duration: 45, type: 'work' },
+          { name: 'Round Rest', duration: 60, type: 'rest' },
+        ],
+      },
+      {
+        id: 'pull-day',
+        name: 'Pull Day',
+        difficulty: 'intermediate',
+        duration: 35,
+        description: 'Back, biceps, rear delts. All pulling movements.',
+        why: 'Targets everything you use to pull weight toward you. Critical for balanced posture and offsetting all the pushing (and screen-hunching) we do.',
+        rounds: 3,
+        warmup: { name: 'Warm-Up', duration: 60, type: 'warmup' },
+        exercises: [
+          { name: 'Pull-Ups', detail: '6-10 reps', duration: 60, type: 'work' },
+          { name: 'Rest', duration: 60, type: 'rest' },
+          { name: 'Kettlebell Rows', detail: '10-12 each side', duration: 60, type: 'work' },
+          { name: 'Rest', duration: 45, type: 'rest' },
+          { name: 'Face Pulls', detail: '15 reps (band)', duration: 45, type: 'work' },
+          { name: 'Rest', duration: 30, type: 'rest' },
+          { name: 'Bicep Curls', detail: '12-15 reps (band/kb)', duration: 45, type: 'work' },
+          { name: 'Rest', duration: 30, type: 'rest' },
+          { name: 'Superman Holds', detail: '30 seconds', duration: 30, type: 'work' },
+          { name: 'Round Rest', duration: 60, type: 'rest' },
+        ],
+      },
+      {
+        id: 'legs-day',
+        name: 'Legs Day',
+        difficulty: 'intermediate',
+        duration: 35,
+        description: 'Quads, hamstrings, glutes, calves. Full lower body.',
+        why: 'Largest muscle group in your body. Training legs burns the most calories, releases the most growth hormone, and improves athletic performance the fastest.',
+        rounds: 3,
+        warmup: { name: 'Warm-Up', duration: 60, type: 'warmup' },
+        exercises: [
+          { name: 'Bodyweight Squats', detail: '20-25 reps', duration: 60, type: 'work' },
+          { name: 'Rest', duration: 45, type: 'rest' },
+          { name: 'Bulgarian Split Squats', detail: '10-12 per leg', duration: 90, type: 'work' },
+          { name: 'Rest', duration: 60, type: 'rest' },
+          { name: 'Walking Lunges', detail: '12 per leg', duration: 60, type: 'work' },
+          { name: 'Rest', duration: 45, type: 'rest' },
+          { name: 'Glute Bridges', detail: '15 reps', duration: 45, type: 'work' },
+          { name: 'Rest', duration: 30, type: 'rest' },
+          { name: 'Calf Raises', detail: '20 reps', duration: 45, type: 'work' },
+          { name: 'Round Rest', duration: 60, type: 'rest' },
+        ],
+      },
+    ],
+  },
+];
+
 // ============================================================
 // CIRCUIT DEFINITIONS
 // ============================================================
@@ -795,6 +1007,16 @@ function renderHome() {
       </div>
       <p class="subtitle">Pick a workout to start</p>
       <div class="circuit-grid">
+      ${SPLITS.map(s => `
+        <div class="split-card" onclick="selectSplit('${s.id}')">
+          <h2>${s.name}<span class="split-badge">PROGRAM</span></h2>
+          <div class="meta">
+            <span class="difficulty diff-${s.difficulty}">${s.difficulty}</span>
+            <span class="meta-info">${s.days.length}-day split</span>
+          </div>
+          <div class="description">${s.description}</div>
+        </div>
+      `).join('')}
       ${CIRCUITS.map(c => `
         <div class="circuit-card" onclick="selectCircuit('${c.id}')">
           <h2>${c.name}${c.amrap ? '<span class="amrap-badge">AMRAP</span>' : ''}</h2>
@@ -808,6 +1030,41 @@ function renderHome() {
       </div>
     </div>
   `;
+}
+
+function selectSplit(id) {
+  const split = SPLITS.find(s => s.id === id);
+  const app = document.getElementById('app');
+  app.innerHTML = `
+    <div class="split-days">
+      <div class="split-days-header">
+        <button class="back-btn" onclick="goHome()">‹ Back</button>
+        <h1>${split.name}<span class="split-badge">PROGRAM</span></h1>
+        <div class="why">${split.why}</div>
+      </div>
+      <div class="split-days-body">
+        <h3>Choose Your Day</h3>
+        <div class="day-grid">
+        ${split.days.map(d => `
+          <div class="day-card" onclick="selectSplitDay('${split.id}', '${d.id}')">
+            <h2>${d.name}</h2>
+            <div class="meta">${d.duration} min • ${d.rounds} rounds</div>
+            <div class="description">${d.description}</div>
+            <div class="why-mini">${d.why}</div>
+          </div>
+        `).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function selectSplitDay(splitId, dayId) {
+  const split = SPLITS.find(s => s.id === splitId);
+  const day = split.days.find(d => d.id === dayId);
+  state.circuit = day;
+  state.screen = 'preview';
+  renderPreview();
 }
 
 function toggleVoice() {
