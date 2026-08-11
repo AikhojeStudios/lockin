@@ -22,7 +22,29 @@
 
   /* Home Screen */
   .home { padding: 20px; overflow-y: auto; height: 100%; }
-  .home h1 { font-size: 32px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.5px; }
+  .home-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .home h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.5px; }
+  .voice-toggle {
+    background: #1c1c1e;
+    border: none;
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .voice-toggle.off { color: #888; }
+  .voice-toggle .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #30d158;
+  }
+  .voice-toggle.off .dot { background: #555; }
   .home .subtitle { color: #888; margin-bottom: 24px; font-size: 15px; }
   .circuit-card {
     background: #1c1c1e;
@@ -51,11 +73,7 @@
   .diff-advanced { background: #ff453a; color: #fff; }
 
   /* Preview Screen */
-  .preview {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
+  .preview { height: 100%; display: flex; flex-direction: column; }
   .preview-header {
     padding: 20px 20px 0 20px;
     background: #000;
@@ -96,11 +114,7 @@
     margin-bottom: 20px;
   }
   .start-btn-top:active { opacity: 0.8; }
-  .preview-body {
-    padding: 0 20px 20px 20px;
-    overflow-y: auto;
-    flex: 1;
-  }
+  .preview-body { padding: 0 20px 20px 20px; overflow-y: auto; flex: 1; }
   .preview .description {
     background: #1c1c1e;
     padding: 16px;
@@ -108,6 +122,17 @@
     margin-bottom: 20px;
     line-height: 1.5;
     font-size: 15px;
+  }
+  .amrap-badge {
+    display: inline-block;
+    background: #ff453a;
+    color: #fff;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-left: 8px;
+    letter-spacing: 0.5px;
   }
   .exercise-list h3 {
     font-size: 13px;
@@ -126,29 +151,17 @@
     align-items: center;
     font-size: 15px;
   }
-  .exercise-item .duration {
-    color: #888;
-    font-size: 13px;
-  }
+  .exercise-item .duration { color: #888; font-size: 13px; }
 
   /* Workout Screen */
-  .workout {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    text-align: center;
-  }
+  .workout { height: 100%; display: flex; flex-direction: column; padding: 20px; text-align: center; }
   .workout-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
   }
-  .workout-header .round-info {
-    color: #888;
-    font-size: 14px;
-  }
+  .workout-header .round-info { color: #888; font-size: 14px; }
   .workout-header .quit-btn {
     background: none;
     color: #ff453a;
@@ -163,11 +176,7 @@
     margin-bottom: 30px;
     overflow: hidden;
   }
-  .progress-fill {
-    height: 100%;
-    background: #0a84ff;
-    transition: width 0.3s;
-  }
+  .progress-fill { height: 100%; background: #0a84ff; transition: width 0.3s; }
   .exercise-name {
     font-size: 42px;
     font-weight: 800;
@@ -178,9 +187,20 @@
   .exercise-type {
     color: #888;
     font-size: 16px;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
     text-transform: uppercase;
     letter-spacing: 2px;
+  }
+  .amrap-hint {
+    background: #ff453a;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-block;
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
   }
   .timer-container {
     flex: 1;
@@ -210,16 +230,9 @@
   .timer-text.rest { color: #30d158; }
   .timer-text.work { color: #fff; }
   .timer-text.warmup { color: #ff9f0a; }
-  .next-up {
-    color: #888;
-    font-size: 15px;
-    margin-bottom: 20px;
-  }
+  .next-up { color: #888; font-size: 15px; margin-bottom: 20px; }
   .next-up span { color: #fff; font-weight: 600; }
-  .workout-controls {
-    display: flex;
-    gap: 12px;
-  }
+  .workout-controls { display: flex; gap: 12px; }
   .control-btn {
     flex: 1;
     background: #1c1c1e;
@@ -231,9 +244,8 @@
     font-weight: 600;
     cursor: pointer;
   }
-  .control-btn.primary {
-    background: #0a84ff;
-  }
+  .control-btn.primary { background: #0a84ff; }
+  .control-btn.next-btn { background: #30d158; color: #000; }
   .control-btn:active { opacity: 0.7; }
 
   /* Complete Screen */
@@ -246,20 +258,9 @@
     justify-content: center;
     text-align: center;
   }
-  .complete .celebration {
-    font-size: 64px;
-    margin-bottom: 20px;
-  }
-  .complete h1 {
-    font-size: 32px;
-    margin-bottom: 10px;
-    letter-spacing: -0.5px;
-  }
-  .complete .subtitle {
-    color: #888;
-    margin-bottom: 30px;
-    font-size: 16px;
-  }
+  .complete .celebration { font-size: 64px; margin-bottom: 20px; }
+  .complete h1 { font-size: 32px; margin-bottom: 10px; letter-spacing: -0.5px; }
+  .complete .subtitle { color: #888; margin-bottom: 30px; font-size: 16px; }
   .complete-stats {
     background: #1c1c1e;
     padding: 20px;
@@ -288,7 +289,6 @@
     width: 100%;
     max-width: 320px;
   }
-
   .hidden { display: none !important; }
 
   @keyframes pulse {
@@ -305,6 +305,12 @@
 <div id="app"></div>
 
 <script>
+// ============================================================
+// CIRCUIT DEFINITIONS
+// ============================================================
+// mode: 'timed' (do until timer), 'amrap' (max reps in time, tap Next when done round)
+// For AMRAP circuits, exercises use 'amrap' mode and there's a total round timer
+
 const CIRCUITS = [
   {
     id: 'soccer-prep',
@@ -353,14 +359,15 @@ const CIRCUITS = [
     name: 'EMOM Full Body',
     difficulty: 'intermediate',
     duration: 30,
-    description: 'Every Minute On the Minute. Consistent stimulus, self-regulating intensity. Great for measuring progress.',
+    description: 'Every Minute On the Minute. Do the reps as fast as you can, then rest until the minute is up. Tap Next when you finish the reps.',
     rounds: 8,
+    amrap: true,
     warmup: { name: 'Warm-Up', duration: 60, type: 'warmup' },
     exercises: [
-      { name: 'Push-Ups + Squats', detail: '10 push-ups, 10 squats', duration: 60, type: 'work' },
-      { name: 'Jump Rope + Plank', detail: '30s jump rope, 30s plank', duration: 60, type: 'work' },
-      { name: 'Pull-Ups + Sit-Ups', detail: '5 pull-ups, 15 sit-ups', duration: 60, type: 'work' },
-      { name: 'Mountain Climbers + Lunges', detail: '30s climbers, 10 lunges', duration: 60, type: 'work' },
+      { name: 'Push-Ups + Squats', detail: '10 push-ups, 10 squats', duration: 60, type: 'work', mode: 'amrap' },
+      { name: 'Jump Rope + Plank', detail: '30s jump rope, 30s plank', duration: 60, type: 'work', mode: 'amrap' },
+      { name: 'Pull-Ups + Sit-Ups', detail: '5 pull-ups, 15 sit-ups', duration: 60, type: 'work', mode: 'amrap' },
+      { name: 'Mountain Climbers + Lunges', detail: '30s climbers, 10 lunges', duration: 60, type: 'work', mode: 'amrap' },
     ],
   },
   {
@@ -393,16 +400,16 @@ const CIRCUITS = [
     id: 'five-min-blaster',
     name: '5-Minute Blaster',
     difficulty: 'advanced',
-    duration: 25,
-    description: 'Five 5-minute rounds. Measurable (count total rounds). Push yourself each round.',
+    duration: 30,
+    description: 'AMRAP style! Do as many rounds as possible in 5 minutes. Complete all exercises, then start over. Tap Next after each exercise when your reps are done.',
     rounds: 5,
+    amrap: true,
     warmup: { name: 'Warm-Up', duration: 60, type: 'warmup' },
     exercises: [
-      { name: 'Push-Ups', detail: '10 reps', duration: 60, type: 'work' },
-      { name: 'Squats', detail: '10 reps', duration: 60, type: 'work' },
-      { name: 'Sit-Ups', detail: '10 reps', duration: 60, type: 'work' },
-      { name: 'Jump Rope', duration: 60, type: 'work' },
-      { name: 'Repeat', detail: 'Keep going', duration: 60, type: 'work' },
+      { name: 'Push-Ups', detail: '10 reps', duration: 300, type: 'work', mode: 'amrap' },
+      { name: 'Squats', detail: '10 reps', duration: 300, type: 'work', mode: 'amrap' },
+      { name: 'Sit-Ups', detail: '10 reps', duration: 300, type: 'work', mode: 'amrap' },
+      { name: 'Jump Rope', detail: '30 seconds', duration: 300, type: 'work', mode: 'amrap' },
       { name: 'Round Rest', duration: 60, type: 'rest' },
     ],
   },
@@ -411,7 +418,7 @@ const CIRCUITS = [
     name: 'Tabata Complex',
     difficulty: 'advanced',
     duration: 24,
-    description: 'Research-proven for VO2 max. Maximum intensity per minute with excellent afterburn effect.',
+    description: 'Research-proven for VO2 max. Maximum intensity per interval with excellent afterburn effect.',
     rounds: 1,
     warmup: { name: 'Warm-Up', duration: 60, type: 'warmup' },
     exercises: [
@@ -485,15 +492,16 @@ const CIRCUITS = [
     name: 'Bodyweight AMRAP',
     difficulty: 'intermediate',
     duration: 30,
-    description: 'As Many Rounds As Possible in 30 min. No equipment. Simple to remember, track rounds completed.',
+    description: 'AMRAP style! As Many Rounds As Possible in 30 minutes. Tap Next when you finish each exercise.',
     rounds: 10,
+    amrap: true,
     warmup: { name: 'Warm-Up', duration: 60, type: 'warmup' },
     exercises: [
-      { name: 'Push-Ups', detail: '10 reps', duration: 45, type: 'work' },
-      { name: 'Squats', detail: '15 reps', duration: 45, type: 'work' },
-      { name: 'Mountain Climbers', detail: '20 reps', duration: 30, type: 'work' },
-      { name: 'Plank', duration: 30, type: 'work' },
-      { name: 'Lunges', detail: '10 total', duration: 30, type: 'work' },
+      { name: 'Push-Ups', detail: '10 reps', duration: 180, type: 'work', mode: 'amrap' },
+      { name: 'Squats', detail: '15 reps', duration: 180, type: 'work', mode: 'amrap' },
+      { name: 'Mountain Climbers', detail: '20 reps', duration: 180, type: 'work', mode: 'amrap' },
+      { name: 'Plank', detail: '30 seconds', duration: 180, type: 'work', mode: 'amrap' },
+      { name: 'Lunges', detail: '10 total', duration: 180, type: 'work', mode: 'amrap' },
       { name: 'Rest', duration: 30, type: 'rest' },
     ],
   },
@@ -534,6 +542,10 @@ const CIRCUITS = [
   },
 ];
 
+// ============================================================
+// APP STATE
+// ============================================================
+
 let state = {
   screen: 'home',
   circuit: null,
@@ -546,7 +558,13 @@ let state = {
   workoutStartTime: null,
   exercises: [],
   wakeLock: null,
+  voiceEnabled: localStorage.getItem('voiceEnabled') !== 'false',
+  spokenCues: new Set(), // track which cues have been spoken for current exercise
 };
+
+// ============================================================
+// AUDIO
+// ============================================================
 
 let audioContext = null;
 
@@ -577,9 +595,65 @@ function playCompleteBeep() {
   setTimeout(() => playBeep(1000, 0.4, 0.4), 300);
 }
 
+// ============================================================
+// VOICE (Text-to-Speech)
+// ============================================================
+
+let voicesLoaded = false;
+let preferredVoice = null;
+
+function loadVoices() {
+  const voices = speechSynthesis.getVoices();
+  if (voices.length > 0) {
+    // Prefer higher quality voices
+    preferredVoice = voices.find(v => v.name.includes('Samantha')) ||
+                     voices.find(v => v.name.includes('Karen')) ||
+                     voices.find(v => v.name.includes('Daniel')) ||
+                     voices.find(v => v.lang === 'en-US' && v.localService) ||
+                     voices.find(v => v.lang.startsWith('en')) ||
+                     voices[0];
+    voicesLoaded = true;
+  }
+}
+
+if ('speechSynthesis' in window) {
+  loadVoices();
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+
+function speak(text, priority = false) {
+  if (!state.voiceEnabled) return;
+  if (!('speechSynthesis' in window)) return;
+
+  try {
+    if (priority) speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    if (preferredVoice) utterance.voice = preferredVoice;
+    utterance.rate = 1.05;
+    utterance.pitch = 1.0;
+    utterance.volume = 1.0;
+    speechSynthesis.speak(utterance);
+  } catch (e) { console.log('Speech not available'); }
+}
+
+function primeSpeech() {
+  // iOS requires speech to be triggered by user interaction first
+  if ('speechSynthesis' in window) {
+    try {
+      const u = new SpeechSynthesisUtterance('');
+      u.volume = 0;
+      speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+}
+
 function vibrate(pattern) {
   if (navigator.vibrate) navigator.vibrate(pattern);
 }
+
+// ============================================================
+// WAKE LOCK
+// ============================================================
 
 async function requestWakeLock() {
   try {
@@ -602,15 +676,51 @@ document.addEventListener('visibilitychange', async () => {
   }
 });
 
+// ============================================================
+// VOICE CUE HELPERS
+// ============================================================
+
+function getExerciseAnnouncement(exercise, isFirst = false) {
+  if (exercise.type === 'rest') {
+    if (exercise.name === 'Round Rest' || exercise.name === 'Long Rest') return 'Take a rest';
+    return 'Rest';
+  }
+  if (exercise.type === 'warmup') return 'Warming up. Get ready';
+
+  // Work exercise
+  const name = exercise.name;
+  if (isFirst) return `Let's start with ${name}`;
+  if (exercise.mode === 'amrap') return `${name}. Do your reps then tap next`;
+  return `${name}`;
+}
+
+function getNextAnnouncement(exercise) {
+  if (exercise.type === 'rest') {
+    if (exercise.name === 'Round Rest') return 'Round rest coming up';
+    return 'Rest coming up';
+  }
+  return `Coming up: ${exercise.name}`;
+}
+
+// ============================================================
+// SCREENS
+// ============================================================
+
 function renderHome() {
   const app = document.getElementById('app');
   app.innerHTML = `
     <div class="home">
-      <h1>Circuit</h1>
+      <div class="home-header">
+        <h1>Circuit</h1>
+        <button class="voice-toggle ${state.voiceEnabled ? '' : 'off'}" onclick="toggleVoice()">
+          <span class="dot"></span>
+          <span>Voice ${state.voiceEnabled ? 'On' : 'Off'}</span>
+        </button>
+      </div>
       <p class="subtitle">Pick a workout to start</p>
       ${CIRCUITS.map(c => `
         <div class="circuit-card" onclick="selectCircuit('${c.id}')">
-          <h2>${c.name}</h2>
+          <h2>${c.name}${c.amrap ? '<span class="amrap-badge">AMRAP</span>' : ''}</h2>
           <div class="meta">
             <span class="difficulty diff-${c.difficulty}">${c.difficulty}</span>
             ${c.duration} min • ${c.rounds} ${c.rounds === 1 ? 'round' : 'rounds'}
@@ -620,6 +730,18 @@ function renderHome() {
       `).join('')}
     </div>
   `;
+}
+
+function toggleVoice() {
+  state.voiceEnabled = !state.voiceEnabled;
+  localStorage.setItem('voiceEnabled', state.voiceEnabled);
+  if (state.voiceEnabled) {
+    primeSpeech();
+    setTimeout(() => speak('Voice on', true), 100);
+  } else {
+    speechSynthesis.cancel();
+  }
+  renderHome();
 }
 
 function selectCircuit(id) {
@@ -635,7 +757,7 @@ function renderPreview() {
     <div class="preview">
       <div class="preview-header">
         <button class="back-btn" onclick="goHome()">‹ Back</button>
-        <h1>${c.name}</h1>
+        <h1>${c.name}${c.amrap ? '<span class="amrap-badge">AMRAP</span>' : ''}</h1>
         <div class="stats">
           <span>⏱ ${c.duration} min</span>
           <span>🔁 ${c.rounds} ${c.rounds === 1 ? 'round' : 'rounds'}</span>
@@ -650,7 +772,7 @@ function renderPreview() {
           ${c.exercises.map(ex => `
             <div class="exercise-item">
               <div>${ex.name}${ex.detail ? ` <span style="color:#888;font-size:13px">• ${ex.detail}</span>` : ''}</div>
-              <div class="duration">${ex.duration}s</div>
+              <div class="duration">${ex.mode === 'amrap' ? 'Tap Next' : ex.duration + 's'}</div>
             </div>
           `).join('')}
         </div>
@@ -662,13 +784,19 @@ function renderPreview() {
 function goHome() {
   stopTimer();
   releaseWakeLock();
+  speechSynthesis.cancel();
   state.screen = 'home';
   state.circuit = null;
   renderHome();
 }
 
+// ============================================================
+// WORKOUT
+// ============================================================
+
 function startWorkout() {
   playBeep(1, 0.01, 0);
+  primeSpeech();
   requestWakeLock();
 
   const c = state.circuit;
@@ -691,10 +819,16 @@ function startWorkout() {
   state.isPaused = false;
   state.workoutStartTime = Date.now();
   state.screen = 'workout';
+  state.spokenCues = new Set();
 
   renderWorkout();
   startTimer();
   playStartBeep();
+
+  const firstEx = state.exercises[0];
+  setTimeout(() => {
+    speak(getExerciseAnnouncement(firstEx, true), true);
+  }, 400);
 }
 
 function startTimer() {
@@ -703,10 +837,37 @@ function startTimer() {
     if (state.isPaused) return;
     state.timeRemaining--;
     state.totalTimeRemaining--;
-    if (state.timeRemaining <= 3 && state.timeRemaining > 0) playCountdownBeep();
-    if (state.timeRemaining <= 0) nextExercise();
-    else updateTimerDisplay();
+
+    checkVoiceCues();
+
+    // Countdown beeps at 5, 4, 3, 2, 1
+    if (state.timeRemaining <= 5 && state.timeRemaining > 0) {
+      playCountdownBeep();
+    }
+
+    if (state.timeRemaining <= 0) {
+      nextExercise();
+    } else {
+      updateTimerDisplay();
+    }
   }, 1000);
+}
+
+function checkVoiceCues() {
+  const currentEx = state.exercises[state.currentExerciseIndex];
+  const nextEx = state.exercises[state.currentExerciseIndex + 1];
+
+  // 10 seconds before end: announce next exercise (skip if AMRAP - user controls transition)
+  if (state.timeRemaining === 10 && nextEx && !state.spokenCues.has('next10') && currentEx.mode !== 'amrap') {
+    speak(getNextAnnouncement(nextEx));
+    state.spokenCues.add('next10');
+  }
+
+  // Countdown from 5
+  if (state.timeRemaining >= 1 && state.timeRemaining <= 5 && !state.spokenCues.has('count' + state.timeRemaining)) {
+    speak(String(state.timeRemaining));
+    state.spokenCues.add('count' + state.timeRemaining);
+  }
 }
 
 function stopTimer() {
@@ -718,13 +879,20 @@ function stopTimer() {
 
 function nextExercise() {
   state.currentExerciseIndex++;
+  state.spokenCues = new Set();
+
   if (state.currentExerciseIndex >= state.exercises.length) {
     completeWorkout();
     return;
   }
+
   const nextEx = state.exercises[state.currentExerciseIndex];
+  const previousRound = state.currentRound;
   state.currentRound = nextEx.round || state.currentRound;
   state.timeRemaining = nextEx.duration;
+
+  const isNewRound = nextEx.round && nextEx.round > previousRound && nextEx.round > 0;
+
   if (nextEx.type === 'rest') {
     playRestBeep();
     vibrate([100, 50, 100]);
@@ -732,21 +900,46 @@ function nextExercise() {
     playStartBeep();
     vibrate([200]);
   }
+
   renderWorkout();
+
+  // Voice announcements
+  setTimeout(() => {
+    if (isNewRound) {
+      const roundText = nextEx.round === state.circuit.rounds ? 'Final round' : `Round ${nextEx.round}`;
+      speak(roundText, true);
+      setTimeout(() => speak(getExerciseAnnouncement(nextEx)), 900);
+    } else {
+      speak(getExerciseAnnouncement(nextEx), true);
+    }
+  }, 300);
 }
 
 function togglePause() {
   state.isPaused = !state.isPaused;
+  if (state.isPaused) {
+    speak('Paused', true);
+  } else {
+    speak('Resuming', true);
+  }
   const pauseBtn = document.getElementById('pauseBtn');
   if (pauseBtn) pauseBtn.textContent = state.isPaused ? 'Resume' : 'Pause';
 }
 
-function skipExercise() { nextExercise(); }
+function skipExercise() {
+  nextExercise();
+}
+
+function amrapNext() {
+  // For AMRAP mode: user tapped Next to move on
+  nextExercise();
+}
 
 function quitWorkout() {
   if (confirm('End workout?')) {
     stopTimer();
     releaseWakeLock();
+    speechSynthesis.cancel();
     goHome();
   }
 }
@@ -762,6 +955,8 @@ function renderWorkout() {
   const roundText = currentEx.isWarmup ? 'Warm-Up' : `Round ${state.currentRound} of ${c.rounds}`;
   const timerClass = currentEx.type === 'rest' ? 'rest' : currentEx.type === 'warmup' ? 'warmup' : 'work';
 
+  const isAmrap = currentEx.mode === 'amrap';
+
   const app = document.getElementById('app');
   app.innerHTML = `
     <div class="workout">
@@ -774,6 +969,7 @@ function renderWorkout() {
       </div>
       <div class="exercise-name">${currentEx.name}</div>
       <div class="exercise-type">${currentEx.detail || currentEx.type}</div>
+      ${isAmrap ? '<div class="amrap-hint">Do reps then tap Next</div>' : ''}
       <div class="timer-container">
         <div class="timer-circle">
           <div class="timer-text ${timerClass}" id="timerText">${formatTime(state.timeRemaining)}</div>
@@ -782,7 +978,10 @@ function renderWorkout() {
       </div>
       <div class="workout-controls">
         <button class="control-btn" id="pauseBtn" onclick="togglePause()">${state.isPaused ? 'Resume' : 'Pause'}</button>
-        <button class="control-btn primary" onclick="skipExercise()">Skip</button>
+        ${isAmrap
+          ? `<button class="control-btn next-btn" onclick="amrapNext()">Next ›</button>`
+          : `<button class="control-btn primary" onclick="skipExercise()">Skip</button>`
+        }
       </div>
     </div>
   `;
@@ -792,7 +991,7 @@ function updateTimerDisplay() {
   const timerText = document.getElementById('timerText');
   if (timerText) {
     timerText.textContent = formatTime(state.timeRemaining);
-    if (state.timeRemaining <= 3 && state.timeRemaining > 0) timerText.classList.add('pulse');
+    if (state.timeRemaining <= 5 && state.timeRemaining > 0) timerText.classList.add('pulse');
     else timerText.classList.remove('pulse');
   }
   const totalDuration = state.exercises.reduce((sum, ex) => sum + ex.duration, 0);
@@ -815,6 +1014,7 @@ function completeWorkout() {
   releaseWakeLock();
   playCompleteBeep();
   vibrate([200, 100, 200, 100, 200]);
+  speak('Workout complete. Great job!', true);
 
   const duration = Math.round((Date.now() - state.workoutStartTime) / 1000);
   const minutes = Math.floor(duration / 60);
@@ -845,6 +1045,10 @@ function completeWorkout() {
   `;
   state.screen = 'complete';
 }
+
+// ============================================================
+// INIT
+// ============================================================
 
 renderHome();
 
