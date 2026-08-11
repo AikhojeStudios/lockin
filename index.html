@@ -6,7 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#000000">
-<title>Circuit</title>
+<title>Lock In</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body {
@@ -23,7 +23,7 @@
   /* Home Screen */
   .home { padding: 20px; overflow-y: auto; height: 100%; }
   .home-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-  .home h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.5px; }
+  .home h1 { font-size: 22px; font-weight: 800; letter-spacing: 0.5px; line-height: 1.15; flex: 1; margin-right: 12px; }
   .voice-toggle {
     background: #1c1c1e;
     border: none;
@@ -756,7 +756,7 @@ function renderHome() {
   app.innerHTML = `
     <div class="home">
       <div class="home-header">
-        <h1>Circuit</h1>
+        <h1>IT'S TIME TO LOCK IN</h1>
         <button class="voice-toggle ${state.voiceEnabled ? '' : 'off'}" onclick="toggleVoice()">
           <span class="dot"></span>
           <span>Voice ${state.voiceEnabled ? 'On' : 'Off'}</span>
