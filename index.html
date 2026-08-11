@@ -359,15 +359,15 @@ const CIRCUITS = [
     name: 'EMOM Full Body',
     difficulty: 'intermediate',
     duration: 30,
-    description: 'Every Minute On the Minute. Do the reps as fast as you can, then rest until the minute is up. Tap Next when you finish the reps.',
+    description: 'Every Minute On the Minute. Do the reps as fast as you can, then rest for the remaining time in the minute. Timer runs full 60 seconds.',
     rounds: 8,
-    amrap: true,
+    emom: true,
     warmup: { name: 'Warm-Up', duration: 60, type: 'warmup' },
     exercises: [
-      { name: 'Push-Ups + Squats', detail: '10 push-ups, 10 squats', duration: 60, type: 'work', mode: 'amrap' },
-      { name: 'Jump Rope + Plank', detail: '30s jump rope, 30s plank', duration: 60, type: 'work', mode: 'amrap' },
-      { name: 'Pull-Ups + Sit-Ups', detail: '5 pull-ups, 15 sit-ups', duration: 60, type: 'work', mode: 'amrap' },
-      { name: 'Mountain Climbers + Lunges', detail: '30s climbers, 10 lunges', duration: 60, type: 'work', mode: 'amrap' },
+      { name: 'Push-Ups + Squats', detail: '10 push-ups, 10 squats then rest', duration: 60, type: 'work' },
+      { name: 'Jump Rope + Plank', detail: '30s jump rope, 30s plank', duration: 60, type: 'work' },
+      { name: 'Pull-Ups + Sit-Ups', detail: '5 pull-ups, 15 sit-ups then rest', duration: 60, type: 'work' },
+      { name: 'Mountain Climbers + Lunges', detail: '30s climbers, 10 lunges', duration: 60, type: 'work' },
     ],
   },
   {
@@ -680,6 +680,34 @@ document.addEventListener('visibilitychange', async () => {
 // VOICE CUE HELPERS
 // ============================================================
 
+function getRepsPhrase(exercise) {
+  // Extract rep info from detail field for spoken cues
+  if (!exercise.detail) return '';
+  const d = exercise.detail.toLowerCase();
+
+  // Skip pace descriptors
+  if (d.includes('pace') || d.includes('all out') || d.includes('keep going')) return '';
+
+  // For AMRAP mode with "reps" phrasing
+  if (exercise.mode === 'amrap') {
+    // Extract just the rep count portion
+    const match = exercise.detail.match(/(\d+)\s*(reps?|total|seconds?|sec)/i);
+    if (match) return `${match[1]} ${match[2]}`;
+    return exercise.detail;
+  }
+
+  // Standard reps
+  const match = exercise.detail.match(/(\d+)\s*reps?/i);
+  if (match) return `${match[1]} reps`;
+  // Total reps (e.g., "20 total")
+  const totalMatch = exercise.detail.match(/(\d+)\s*total/i);
+  if (totalMatch) return `${totalMatch[1]} total`;
+  // Seconds (e.g., "30 seconds")
+  const secMatch = exercise.detail.match(/(\d+)\s*sec/i);
+  if (secMatch) return `${secMatch[1]} seconds`;
+  return '';
+}
+
 function getExerciseAnnouncement(exercise, isFirst = false) {
   if (exercise.type === 'rest') {
     if (exercise.name === 'Round Rest' || exercise.name === 'Long Rest') return 'Take a rest';
@@ -687,11 +715,27 @@ function getExerciseAnnouncement(exercise, isFirst = false) {
   }
   if (exercise.type === 'warmup') return 'Warming up. Get ready';
 
-  // Work exercise
   const name = exercise.name;
-  if (isFirst) return `Let's start with ${name}`;
-  if (exercise.mode === 'amrap') return `${name}. Do your reps then tap next`;
-  return `${name}`;
+  const reps = getRepsPhrase(exercise);
+
+  // EMOM: announce reps then rest instruction
+  if (state.circuit && state.circuit.emom) {
+    if (isFirst) {
+      return reps ? `Let's start. ${name}. ${reps}, then rest.` : `Let's start with ${name}. Rest when done.`;
+    }
+    return reps ? `${name}. ${reps}, then rest.` : `${name}. Rest when done.`;
+  }
+
+  // AMRAP: announce reps and tap next
+  if (exercise.mode === 'amrap') {
+    return reps ? `${name}. ${reps}, then tap next.` : `${name}. Do your reps then tap next.`;
+  }
+
+  // Standard timed exercise: announce with reps if available
+  if (isFirst) {
+    return reps ? `Let's start with ${name}. ${reps}.` : `Let's start with ${name}`;
+  }
+  return reps ? `${name}. ${reps}.` : name;
 }
 
 function getNextAnnouncement(exercise) {
@@ -699,7 +743,8 @@ function getNextAnnouncement(exercise) {
     if (exercise.name === 'Round Rest') return 'Round rest coming up';
     return 'Rest coming up';
   }
-  return `Coming up: ${exercise.name}`;
+  const reps = getRepsPhrase(exercise);
+  return reps ? `Coming up: ${exercise.name}. ${reps}.` : `Coming up: ${exercise.name}`;
 }
 
 // ============================================================
