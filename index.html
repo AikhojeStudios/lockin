@@ -284,6 +284,26 @@
     line-height: 1.5;
     font-size: 15px;
   }
+  .how-to {
+    background: #1c1c1e;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    border-left: 3px solid #0a84ff;
+  }
+  .how-to h3 {
+    font-size: 12px;
+    color: #0a84ff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .how-to p {
+    color: #ddd;
+    font-size: 14px;
+    line-height: 1.6;
+  }
   .amrap-badge {
     display: inline-block;
     background: #ff453a;
@@ -466,6 +486,29 @@
 
 <script>
 // ============================================================
+// HOW TO INSTRUCTIONS
+// ============================================================
+
+const HOW_TO = {
+  'soccer-prep': 'Follow the timer for each exercise. Do the reps within the time given, then take the built-in rest. Circuit repeats 4 times.',
+  'mountain-climber': 'Do each exercise for the full time shown, focusing on form over speed. Full circuit repeats 5 times with 1 minute rest between rounds.',
+  'emom-full-body': 'Every Minute On the Minute. When the minute starts, complete the reps as fast as you can, then rest until the next minute begins. Each minute you move to the next exercise. Timer runs the full 60 seconds.',
+  'push-pull-cardio': 'Standard circuit. Do the reps or hold for the time shown, then move to the next exercise. Built-in rest between muscle groups. Circuit repeats 4 times.',
+  'five-min-blaster': 'The 5-minute timer runs continuously the whole round. Do the reps for each exercise, tap Next to move to the next. Keep cycling: Push-Ups → Squats → Sit-Ups → Jump Rope. When 5 min is up, rest 1 minute, then start next round. Goal: complete as many full cycles as possible per round.',
+  'tabata': '20 seconds all-out effort, 10 seconds rest, 8 rounds per exercise. Then 1-minute rest and switch to the next exercise. Push maximum intensity during work intervals.',
+  'bodyweight-amrap': 'As Many Rounds As Possible in 30 minutes. Complete the reps for each exercise, tap Next to move on. Keep cycling until time is up. Track how many full rounds you finish.',
+  'quick-15': 'Short and focused. Do the reps or hold for the time shown, then rest. Full circuit repeats 3 times.',
+  'core-crusher': 'Do each exercise for the full duration shown. Rest between exercises. Full circuit repeats 3 times.',
+  'push-day': 'Straight sets. Do the reps for each exercise, then take the built-in rest before the next. Complete 3 rounds of the full sequence.',
+  'pull-day': 'Straight sets. Focus on controlled reps and full range of motion. Complete 3 rounds of the full sequence.',
+  'legs-day': 'Straight sets. Focus on depth and form over speed. Legs get longer rest between exercises. Complete 3 rounds.',
+};
+
+function getHowTo(id) {
+  return HOW_TO[id] || 'Follow the timer for each exercise. Do the reps in the time shown, then rest between exercises.';
+}
+
+// ============================================================
 // SPLIT WORKOUTS (Multi-day programs)
 // ============================================================
 // These are programs that contain multiple workout sessions (e.g. Push/Pull/Legs)
@@ -644,17 +687,18 @@ const CIRCUITS = [
     name: '5-Minute Blaster',
     difficulty: 'advanced',
     duration: 30,
-    description: 'AMRAP style! Do as many rounds as possible in 5 minutes. Complete all exercises, then start over. Tap Next after each exercise when your reps are done.',
+    description: 'Cycle through 4 exercises for 5 minutes non-stop, then rest 1 minute. 5 rounds total.',
     rounds: 5,
-    amrap: true,
+    continuousRound: true,
+    roundDuration: 300,
     warmup: { name: 'Warm-Up', duration: 60, type: 'warmup' },
-    exercises: [
-      { name: 'Push-Ups', detail: '10 reps', duration: 300, type: 'work', mode: 'amrap' },
-      { name: 'Squats', detail: '10 reps', duration: 300, type: 'work', mode: 'amrap' },
-      { name: 'Sit-Ups', detail: '10 reps', duration: 300, type: 'work', mode: 'amrap' },
-      { name: 'Jump Rope', detail: '30 seconds', duration: 300, type: 'work', mode: 'amrap' },
-      { name: 'Round Rest', duration: 60, type: 'rest' },
+    workExercises: [
+      { name: 'Push-Ups', detail: '10 reps', type: 'work' },
+      { name: 'Squats', detail: '10 reps', type: 'work' },
+      { name: 'Sit-Ups', detail: '10 reps', type: 'work' },
+      { name: 'Jump Rope', detail: '30 seconds', type: 'work' },
     ],
+    roundRest: { name: 'Round Rest', duration: 60, type: 'rest' },
   },
   {
     id: 'tabata',
@@ -794,6 +838,7 @@ let state = {
   circuit: null,
   currentRound: 1,
   currentExerciseIndex: 0,
+  workExerciseIndex: 0,
   timeRemaining: 0,
   totalTimeRemaining: 0,
   isPaused: false,
@@ -802,7 +847,7 @@ let state = {
   exercises: [],
   wakeLock: null,
   voiceEnabled: localStorage.getItem('voiceEnabled') !== 'false',
-  spokenCues: new Set(), // track which cues have been spoken for current exercise
+  spokenCues: new Set(),
 };
 
 // ============================================================
@@ -1088,11 +1133,15 @@ function selectCircuit(id) {
 function renderPreview() {
   const c = state.circuit;
   const app = document.getElementById('app');
+
+  const exercisesToShow = c.continuousRound ? c.workExercises : c.exercises;
+  const structureLabel = c.continuousRound ? 'Cycle Through These' : 'Round Structure';
+
   app.innerHTML = `
     <div class="preview">
       <div class="preview-header">
         <button class="back-btn" onclick="goHome()">‹ Back</button>
-        <h1>${c.name}${c.amrap ? '<span class="amrap-badge">AMRAP</span>' : ''}</h1>
+        <h1>${c.name}${c.amrap ? '<span class="amrap-badge">AMRAP</span>' : ''}${c.continuousRound ? '<span class="amrap-badge">CONTINUOUS</span>' : ''}</h1>
         <div class="stats">
           <span>⏱ ${c.duration} min</span>
           <span>🔁 ${c.rounds} ${c.rounds === 1 ? 'round' : 'rounds'}</span>
@@ -1102,14 +1151,24 @@ function renderPreview() {
       </div>
       <div class="preview-body">
         <div class="description">${c.description}</div>
+        <div class="how-to">
+          <h3>How To</h3>
+          <p>${getHowTo(c.id)}</p>
+        </div>
         <div class="exercise-list">
-          <h3>Round Structure</h3>
-          ${c.exercises.map(ex => `
+          <h3>${structureLabel}</h3>
+          ${exercisesToShow.map(ex => `
             <div class="exercise-item">
               <div>${ex.name}${ex.detail ? ` <span style="color:#888;font-size:13px">• ${ex.detail}</span>` : ''}</div>
-              <div class="duration">${ex.mode === 'amrap' ? 'Tap Next' : ex.duration + 's'}</div>
+              <div class="duration">${ex.mode === 'amrap' ? 'Tap Next' : (c.continuousRound ? 'Tap Next' : ex.duration + 's')}</div>
             </div>
           `).join('')}
+          ${c.continuousRound ? `
+            <div class="exercise-item" style="opacity:0.7">
+              <div>Round Rest</div>
+              <div class="duration">${c.roundRest.duration}s</div>
+            </div>
+          ` : ''}
         </div>
       </div>
     </div>
@@ -1141,13 +1200,32 @@ function startWorkout() {
     state.exercises.push({ ...c.warmup, round: 0, isWarmup: true });
   }
 
-  for (let r = 1; r <= c.rounds; r++) {
-    c.exercises.forEach(ex => {
-      state.exercises.push({ ...ex, round: r });
-    });
+  if (c.continuousRound) {
+    // Continuous round mode: one "round marker" per round + round rest between
+    for (let r = 1; r <= c.rounds; r++) {
+      state.exercises.push({
+        name: 'CONTINUOUS_ROUND',
+        duration: c.roundDuration,
+        type: 'work',
+        continuousRound: true,
+        round: r,
+      });
+      // Add round rest after all rounds except the last
+      if (r < c.rounds && c.roundRest) {
+        state.exercises.push({ ...c.roundRest, round: r });
+      }
+    }
+  } else {
+    // Standard mode: flatten exercises across rounds
+    for (let r = 1; r <= c.rounds; r++) {
+      c.exercises.forEach(ex => {
+        state.exercises.push({ ...ex, round: r });
+      });
+    }
   }
 
   state.currentExerciseIndex = 0;
+  state.workExerciseIndex = 0;
   state.currentRound = 1;
   state.timeRemaining = state.exercises[0].duration;
   state.totalTimeRemaining = state.exercises.reduce((sum, ex) => sum + ex.duration, 0);
@@ -1162,7 +1240,13 @@ function startWorkout() {
 
   const firstEx = state.exercises[0];
   setTimeout(() => {
-    speak(getExerciseAnnouncement(firstEx, true), true);
+    // For continuous rounds starting fresh, announce the first work exercise
+    if (firstEx.continuousRound) {
+      const workEx = { ...c.workExercises[0], type: 'work' };
+      speak(getExerciseAnnouncement(workEx, true), true);
+    } else {
+      speak(getExerciseAnnouncement(firstEx, true), true);
+    }
   }, 400);
 }
 
@@ -1226,6 +1310,11 @@ function nextExercise() {
   state.currentRound = nextEx.round || state.currentRound;
   state.timeRemaining = nextEx.duration;
 
+  // Reset work exercise cycling for new continuous round
+  if (nextEx.continuousRound) {
+    state.workExerciseIndex = 0;
+  }
+
   const isNewRound = nextEx.round && nextEx.round > previousRound && nextEx.round > 0;
 
   if (nextEx.type === 'rest') {
@@ -1240,12 +1329,17 @@ function nextExercise() {
 
   // Voice announcements
   setTimeout(() => {
-    if (isNewRound) {
+    // For continuous rounds, announce the first work exercise instead of "CONTINUOUS_ROUND"
+    const announceEx = nextEx.continuousRound
+      ? { ...state.circuit.workExercises[0], type: 'work' }
+      : nextEx;
+
+    if (isNewRound && nextEx.type !== 'rest') {
       const roundText = nextEx.round === state.circuit.rounds ? 'Final round' : `Round ${nextEx.round}`;
       speak(roundText, true);
-      setTimeout(() => speak(getExerciseAnnouncement(nextEx)), 900);
+      setTimeout(() => speak(getExerciseAnnouncement(announceEx)), 900);
     } else {
-      speak(getExerciseAnnouncement(nextEx), true);
+      speak(getExerciseAnnouncement(announceEx), true);
     }
   }, 300);
 }
@@ -1266,7 +1360,20 @@ function skipExercise() {
 }
 
 function amrapNext() {
-  // For AMRAP mode: user tapped Next to move on
+  const currentEx = state.exercises[state.currentExerciseIndex];
+
+  // Continuous round mode: cycle to next work exercise, keep timer running
+  if (currentEx.continuousRound) {
+    state.workExerciseIndex = (state.workExerciseIndex + 1) % state.circuit.workExercises.length;
+    playStartBeep();
+    vibrate([100]);
+    renderWorkout();
+    const workEx = { ...state.circuit.workExercises[state.workExerciseIndex], type: 'work' };
+    speak(getExerciseAnnouncement(workEx), true);
+    return;
+  }
+
+  // Standard AMRAP: advance to next exercise
   nextExercise();
 }
 
@@ -1290,7 +1397,25 @@ function renderWorkout() {
   const roundText = currentEx.isWarmup ? 'Warm-Up' : `Round ${state.currentRound} of ${c.rounds}`;
   const timerClass = currentEx.type === 'rest' ? 'rest' : currentEx.type === 'warmup' ? 'warmup' : 'work';
 
+  // For continuous rounds, display the current work exercise info
+  let displayEx = currentEx;
+  if (currentEx.continuousRound) {
+    const workEx = c.workExercises[state.workExerciseIndex];
+    displayEx = { ...workEx, type: 'work' };
+  }
+
   const isAmrap = currentEx.mode === 'amrap';
+  const isContinuous = currentEx.continuousRound;
+  const showNextButton = isAmrap || isContinuous;
+
+  // For continuous rounds, show the next work exercise in the cycle
+  let nextDisplayName = null;
+  if (isContinuous) {
+    const nextWorkIdx = (state.workExerciseIndex + 1) % c.workExercises.length;
+    nextDisplayName = c.workExercises[nextWorkIdx].name;
+  } else if (nextEx) {
+    nextDisplayName = nextEx.name;
+  }
 
   const app = document.getElementById('app');
   app.innerHTML = `
@@ -1302,18 +1427,19 @@ function renderWorkout() {
       <div class="progress-bar">
         <div class="progress-fill" style="width: ${progress}%"></div>
       </div>
-      <div class="exercise-name">${currentEx.name}</div>
-      <div class="exercise-type">${currentEx.detail || currentEx.type}</div>
+      <div class="exercise-name">${displayEx.name}</div>
+      <div class="exercise-type">${displayEx.detail || displayEx.type}</div>
       ${isAmrap ? '<div class="amrap-hint">Do reps then tap Next</div>' : ''}
+      ${isContinuous ? '<div class="amrap-hint">Cycle through exercises · Timer keeps running</div>' : ''}
       <div class="timer-container">
         <div class="timer-circle">
           <div class="timer-text ${timerClass}" id="timerText">${formatTime(state.timeRemaining)}</div>
         </div>
-        ${nextEx ? `<div class="next-up">Next: <span>${nextEx.name}</span></div>` : ''}
+        ${nextDisplayName ? `<div class="next-up">Next: <span>${nextDisplayName}</span></div>` : ''}
       </div>
       <div class="workout-controls">
         <button class="control-btn" id="pauseBtn" onclick="togglePause()">${state.isPaused ? 'Resume' : 'Pause'}</button>
-        ${isAmrap
+        ${showNextButton
           ? `<button class="control-btn next-btn" onclick="amrapNext()">Next ›</button>`
           : `<button class="control-btn primary" onclick="skipExercise()">Skip</button>`
         }
