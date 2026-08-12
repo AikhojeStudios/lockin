@@ -46,6 +46,59 @@
   }
   .voice-toggle.off .dot { background: #555; }
   .home .subtitle { color: #888; margin-bottom: 24px; font-size: 15px; }
+
+  /* Filters */
+  .filters-sticky {
+    position: sticky;
+    top: 0;
+    background: #000;
+    padding: 8px 0 12px;
+    margin-bottom: 12px;
+    z-index: 20;
+    border-bottom: 1px solid #1c1c1e;
+  }
+  .filter-label {
+    color: #666;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    margin: 8px 0 6px;
+  }
+  .filter-label:first-child { margin-top: 0; }
+  .filter-row {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 2px;
+  }
+  .filter-row::-webkit-scrollbar { display: none; }
+  .pill {
+    background: #1c1c1e;
+    color: #ccc;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .pill:active { transform: scale(0.95); }
+  .pill.active {
+    background: #0a84ff;
+    color: #fff;
+  }
+  .no-results {
+    text-align: center;
+    color: #666;
+    padding: 40px 20px;
+    font-size: 15px;
+  }
   .circuit-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -640,6 +693,8 @@ const SPLITS = [
     id: 'push-pull-legs',
     name: 'Push / Pull / Legs',
     difficulty: 'intermediate',
+    duration: 35,
+    focus: 'full-body',
     description: 'Classic 3-day muscle building split. Alternate between push, pull, and leg days for complete recovery and consistent gains.',
     why: 'Each day targets different muscle groups so one recovers while another works. Best for building muscle without overtraining. Run it 3-6 days a week depending on recovery.',
     days: [
@@ -725,6 +780,7 @@ const CIRCUITS = [
     name: 'Soccer Prep',
     difficulty: 'intermediate',
     duration: 35,
+    focus: 'cardio',
     description: 'Mimics soccer\'s interval nature. Full body engagement with cardio + strength. Perfect for maintaining sport fitness.',
     rounds: 4,
     warmup: { name: 'Warm-Up', duration: 60, type: 'warmup' },
@@ -748,6 +804,7 @@ const CIRCUITS = [
     name: 'Mountain Climber Special',
     difficulty: 'intermediate',
     duration: 30,
+    focus: 'full-body',
     description: 'Mountain climbers + core + full body. Great fat burner using multiple energy systems.',
     rounds: 5,
     warmup: { name: 'Warm-Up', duration: 60, type: 'warmup' },
@@ -767,6 +824,7 @@ const CIRCUITS = [
     name: 'EMOM Full Body',
     difficulty: 'intermediate',
     duration: 30,
+    focus: 'full-body',
     description: 'Every Minute On the Minute. Do the reps as fast as you can, then rest for the remaining time in the minute. Timer runs full 60 seconds.',
     rounds: 8,
     emom: true,
@@ -783,6 +841,7 @@ const CIRCUITS = [
     name: 'Push / Pull / Cardio',
     difficulty: 'intermediate',
     duration: 40,
+    focus: 'full-body',
     description: 'Complete muscle group targeting with sustained heart rate. Great for muscle building AND cardio.',
     rounds: 4,
     warmup: { name: 'Warm-Up', duration: 60, type: 'warmup' },
@@ -809,6 +868,7 @@ const CIRCUITS = [
     name: '5-Minute Blaster',
     difficulty: 'advanced',
     duration: 30,
+    focus: 'full-body',
     description: 'Cycle through 4 exercises for 5 minutes non-stop, then rest 1 minute. 5 rounds total.',
     rounds: 5,
     continuousRound: true,
@@ -827,6 +887,7 @@ const CIRCUITS = [
     name: 'Tabata Complex',
     difficulty: 'advanced',
     duration: 24,
+    focus: 'cardio',
     description: 'Research-proven for VO2 max. Maximum intensity per interval with excellent afterburn effect.',
     rounds: 1,
     warmup: { name: 'Warm-Up', duration: 60, type: 'warmup' },
@@ -901,6 +962,7 @@ const CIRCUITS = [
     name: 'Bodyweight AMRAP',
     difficulty: 'intermediate',
     duration: 30,
+    focus: 'full-body',
     description: 'As Many Rounds As Possible in 30 minutes. Cycle through all exercises non-stop, tap Done to finish a round and rest 60s.',
     rounds: null,
     continuousRound: true,
@@ -920,6 +982,7 @@ const CIRCUITS = [
     name: 'Quick 15',
     difficulty: 'beginner',
     duration: 15,
+    focus: 'full-body',
     description: 'Short and effective. Perfect when time is tight but you still want a real workout.',
     rounds: 3,
     warmup: { name: 'Warm-Up', duration: 45, type: 'warmup' },
@@ -936,6 +999,7 @@ const CIRCUITS = [
     name: 'Core Crusher',
     difficulty: 'intermediate',
     duration: 20,
+    focus: 'core',
     description: 'Focused abs and core work. Endurance-based movements to build a strong midsection.',
     rounds: 3,
     warmup: { name: 'Warm-Up', duration: 45, type: 'warmup' },
@@ -976,7 +1040,39 @@ let state = {
   roundTimeRemaining: 0,
   restTimeRemaining: 0,
   completedRounds: 0,
+  // Filter state
+  filters: {
+    type: 'all',       // all, circuits, amrap, programs
+    difficulty: 'all', // all, beginner, intermediate, advanced
+    duration: 'all',   // all, short (<20), medium (20-30), long (30+)
+    focus: 'all',      // all, full-body, upper, lower, core, cardio
+  },
 };
+
+function getCircuitType(c) {
+  if (c.continuousRound || c.amrap) return 'amrap';
+  return 'circuits';
+}
+
+function matchesFilters(item, isSplit = false) {
+  const f = state.filters;
+  const type = isSplit ? 'programs' : getCircuitType(item);
+  if (f.type !== 'all' && f.type !== type) return false;
+  if (f.difficulty !== 'all' && f.difficulty !== item.difficulty) return false;
+  if (f.focus !== 'all' && f.focus !== item.focus) return false;
+  if (f.duration !== 'all') {
+    const d = item.duration || 0;
+    if (f.duration === 'short' && d >= 20) return false;
+    if (f.duration === 'medium' && (d < 20 || d > 30)) return false;
+    if (f.duration === 'long' && d <= 30) return false;
+  }
+  return true;
+}
+
+function setFilter(category, value) {
+  state.filters[category] = value;
+  renderHome();
+}
 
 // ============================================================
 // AUDIO
@@ -1169,6 +1265,47 @@ function getNextAnnouncement(exercise) {
 
 function renderHome() {
   const app = document.getElementById('app');
+
+  const typeOptions = [
+    { value: 'all', label: 'All' },
+    { value: 'circuits', label: 'Circuits' },
+    { value: 'amrap', label: 'AMRAP' },
+    { value: 'programs', label: 'Programs' },
+  ];
+  const difficultyOptions = [
+    { value: 'all', label: 'All' },
+    { value: 'beginner', label: 'Beginner' },
+    { value: 'intermediate', label: 'Intermediate' },
+    { value: 'advanced', label: 'Advanced' },
+  ];
+  const durationOptions = [
+    { value: 'all', label: 'All' },
+    { value: 'short', label: '< 20 min' },
+    { value: 'medium', label: '20–30 min' },
+    { value: 'long', label: '30+ min' },
+  ];
+  const focusOptions = [
+    { value: 'all', label: 'All' },
+    { value: 'full-body', label: 'Full Body' },
+    { value: 'upper', label: 'Upper' },
+    { value: 'lower', label: 'Lower' },
+    { value: 'core', label: 'Core' },
+    { value: 'cardio', label: 'Cardio' },
+  ];
+
+  const renderPills = (category, options) => `
+    <div class="filter-row">
+      ${options.map(o => `
+        <button class="pill ${state.filters[category] === o.value ? 'active' : ''}"
+                onclick="setFilter('${category}', '${o.value}')">${o.label}</button>
+      `).join('')}
+    </div>
+  `;
+
+  const filteredSplits = SPLITS.filter(s => matchesFilters(s, true));
+  const filteredCircuits = CIRCUITS.filter(c => matchesFilters(c, false));
+  const totalResults = filteredSplits.length + filteredCircuits.length;
+
   app.innerHTML = `
     <div class="home">
       <div class="home-header">
@@ -1178,29 +1315,40 @@ function renderHome() {
           <span>Voice ${state.voiceEnabled ? 'On' : 'Off'}</span>
         </button>
       </div>
-      <p class="subtitle">Pick a workout to start</p>
-      <div class="circuit-grid">
-      ${SPLITS.map(s => `
-        <div class="split-card" onclick="selectSplit('${s.id}')">
-          <h2>${s.name}<span class="split-badge">PROGRAM</span></h2>
-          <div class="meta">
-            <span class="difficulty diff-${s.difficulty}">${s.difficulty}</span>
-            <span class="meta-info">${s.days.length}-day split</span>
-          </div>
-          <div class="description">${s.description}</div>
-        </div>
-      `).join('')}
-      ${CIRCUITS.map(c => `
-        <div class="circuit-card" onclick="selectCircuit('${c.id}')">
-          <h2>${c.name}${c.amrap ? '<span class="amrap-badge">AMRAP</span>' : ''}${c.continuousRound ? '<span class="amrap-badge">AMRAP</span>' : ''}</h2>
-          <div class="meta">
-            <span class="difficulty diff-${c.difficulty}">${c.difficulty}</span>
-            <span class="meta-info">${c.duration} min${c.rounds ? ` • ${c.rounds} ${c.rounds === 1 ? 'round' : 'rounds'}` : ''}</span>
-          </div>
-          <div class="description">${c.description}</div>
-        </div>
-      `).join('')}
+      <div class="filters-sticky">
+        <div class="filter-label">Type</div>
+        ${renderPills('type', typeOptions)}
+        <div class="filter-label">Difficulty</div>
+        ${renderPills('difficulty', difficultyOptions)}
+        <div class="filter-label">Duration</div>
+        ${renderPills('duration', durationOptions)}
+        <div class="filter-label">Focus</div>
+        ${renderPills('focus', focusOptions)}
       </div>
+      ${totalResults === 0 ? '<div class="no-results">No workouts match your filters.</div>' : `
+      <div class="circuit-grid">
+        ${filteredSplits.map(s => `
+          <div class="split-card" onclick="selectSplit('${s.id}')">
+            <h2>${s.name}<span class="split-badge">PROGRAM</span></h2>
+            <div class="meta">
+              <span class="difficulty diff-${s.difficulty}">${s.difficulty}</span>
+              <span class="meta-info">${s.days.length}-day split</span>
+            </div>
+            <div class="description">${s.description}</div>
+          </div>
+        `).join('')}
+        ${filteredCircuits.map(c => `
+          <div class="circuit-card" onclick="selectCircuit('${c.id}')">
+            <h2>${c.name}${c.amrap ? '<span class="amrap-badge">AMRAP</span>' : ''}${c.continuousRound ? '<span class="amrap-badge">AMRAP</span>' : ''}</h2>
+            <div class="meta">
+              <span class="difficulty diff-${c.difficulty}">${c.difficulty}</span>
+              <span class="meta-info">${c.duration} min${c.rounds ? ` • ${c.rounds} ${c.rounds === 1 ? 'round' : 'rounds'}` : ''}</span>
+            </div>
+            <div class="description">${c.description}</div>
+          </div>
+        `).join('')}
+      </div>
+      `}
     </div>
   `;
 }
