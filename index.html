@@ -425,8 +425,101 @@
     cursor: pointer;
   }
   .control-btn.primary { background: #0a84ff; }
+  .control-btn.done-btn {
+    background: #30d158;
+    color: #000;
+    font-weight: 700;
+  }
   .control-btn.next-btn { background: #30d158; color: #000; }
   .control-btn:active { opacity: 0.7; }
+
+  /* Continuous Round Workout Layout */
+  .continuous-round .round-timer-block {
+    text-align: center;
+    background: #1c1c1e;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .round-timer-label {
+    color: #888;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .round-timer {
+    font-size: 64px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -2px;
+    line-height: 1;
+  }
+  .round-timer.pulse {
+    color: #ff453a;
+    animation: pulse 0.5s ease-in-out infinite;
+  }
+  .round-exercise-list {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 12px;
+  }
+  .round-exercise {
+    background: #1c1c1e;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .round-ex-number {
+    background: #0a84ff;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+  .round-ex-content {
+    flex: 1;
+  }
+  .round-ex-name {
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .round-ex-detail {
+    color: #888;
+    font-size: 13px;
+    margin-top: 2px;
+  }
+
+  /* Rest Screen */
+  .continuous-rest .rest-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .rest-label {
+    font-size: 48px;
+    font-weight: 800;
+    color: #30d158;
+    letter-spacing: 8px;
+    margin-bottom: 30px;
+  }
+  .rest-circle {
+    background: rgba(48, 209, 88, 0.1);
+    border: 2px solid #30d158;
+  }
 
   /* Complete Screen */
   .complete {
@@ -494,9 +587,9 @@ const HOW_TO = {
   'mountain-climber': 'Do each exercise for the full time shown, focusing on form over speed. Full circuit repeats 5 times with 1 minute rest between rounds.',
   'emom-full-body': 'Every Minute On the Minute. When the minute starts, complete the reps as fast as you can, then rest until the next minute begins. Each minute you move to the next exercise. Timer runs the full 60 seconds.',
   'push-pull-cardio': 'Standard circuit. Do the reps or hold for the time shown, then move to the next exercise. Built-in rest between muscle groups. Circuit repeats 4 times.',
-  'five-min-blaster': 'The 5-minute timer runs continuously the whole round. Do the reps for each exercise, tap Next to move to the next. Keep cycling: Push-Ups → Squats → Sit-Ups → Jump Rope. When 5 min is up, rest 1 minute, then start next round. Goal: complete as many full cycles as possible per round.',
+  'five-min-blaster': 'Cycle through the exercises for 5 minutes non-stop. Complete all exercises in the list, then tap Done to end the round and start a 60-second rest. After rest, a new round begins with a fresh 5-minute timer. If the 5-minute timer runs out before you tap Done, the round ends automatically. 5 rounds total.',
   'tabata': '20 seconds all-out effort, 10 seconds rest, 8 rounds per exercise. Then 1-minute rest and switch to the next exercise. Push maximum intensity during work intervals.',
-  'bodyweight-amrap': 'As Many Rounds As Possible in 30 minutes. Complete the reps for each exercise, tap Next to move on. Keep cycling until time is up. Track how many full rounds you finish.',
+  'bodyweight-amrap': 'A 30-minute global timer runs the whole workout. Complete all the exercises in the list, then tap Done to finish the round and start a 60-second rest. After rest, another round begins. The goal is to complete as many rounds as possible in 30 minutes.',
   'quick-15': 'Short and focused. Do the reps or hold for the time shown, then rest. Full circuit repeats 3 times.',
   'core-crusher': 'Do each exercise for the full duration shown. Rest between exercises. Full circuit repeats 3 times.',
   'push-day': 'Straight sets. Do the reps for each exercise, then take the built-in rest before the next. Complete 3 rounds of the full sequence.',
@@ -779,18 +872,19 @@ const CIRCUITS = [
     name: 'Bodyweight AMRAP',
     difficulty: 'intermediate',
     duration: 30,
-    description: 'AMRAP style! As Many Rounds As Possible in 30 minutes. Tap Next when you finish each exercise.',
-    rounds: 10,
-    amrap: true,
+    description: 'As Many Rounds As Possible in 30 minutes. Cycle through all exercises non-stop, tap Done to finish a round and rest 60s.',
+    rounds: null,
+    continuousRound: true,
+    totalDuration: 1800,
     warmup: { name: 'Warm-Up', duration: 60, type: 'warmup' },
-    exercises: [
-      { name: 'Push-Ups', detail: '10 reps', duration: 180, type: 'work', mode: 'amrap' },
-      { name: 'Squats', detail: '15 reps', duration: 180, type: 'work', mode: 'amrap' },
-      { name: 'Mountain Climbers', detail: '20 reps', duration: 180, type: 'work', mode: 'amrap' },
-      { name: 'Plank', detail: '30 seconds', duration: 180, type: 'work', mode: 'amrap' },
-      { name: 'Lunges', detail: '10 total', duration: 180, type: 'work', mode: 'amrap' },
-      { name: 'Rest', duration: 30, type: 'rest' },
+    workExercises: [
+      { name: 'Push-Ups', detail: '10 reps', type: 'work' },
+      { name: 'Squats', detail: '15 reps', type: 'work' },
+      { name: 'Mountain Climbers', detail: '20 reps', type: 'work' },
+      { name: 'Plank', detail: '30 seconds', type: 'work' },
+      { name: 'Lunges', detail: '10 total', type: 'work' },
     ],
+    roundRest: { name: 'Round Rest', duration: 60, type: 'rest' },
   },
   {
     id: 'quick-15',
@@ -838,7 +932,6 @@ let state = {
   circuit: null,
   currentRound: 1,
   currentExerciseIndex: 0,
-  workExerciseIndex: 0,
   timeRemaining: 0,
   totalTimeRemaining: 0,
   isPaused: false,
@@ -848,6 +941,12 @@ let state = {
   wakeLock: null,
   voiceEnabled: localStorage.getItem('voiceEnabled') !== 'false',
   spokenCues: new Set(),
+  // Continuous round state
+  phase: 'standard',
+  workoutTimeRemaining: 0,
+  roundTimeRemaining: 0,
+  restTimeRemaining: 0,
+  completedRounds: 0,
 };
 
 // ============================================================
@@ -1064,10 +1163,10 @@ function renderHome() {
       `).join('')}
       ${CIRCUITS.map(c => `
         <div class="circuit-card" onclick="selectCircuit('${c.id}')">
-          <h2>${c.name}${c.amrap ? '<span class="amrap-badge">AMRAP</span>' : ''}</h2>
+          <h2>${c.name}${c.amrap ? '<span class="amrap-badge">AMRAP</span>' : ''}${c.continuousRound ? '<span class="amrap-badge">AMRAP</span>' : ''}</h2>
           <div class="meta">
             <span class="difficulty diff-${c.difficulty}">${c.difficulty}</span>
-            <span class="meta-info">${c.duration} min • ${c.rounds} ${c.rounds === 1 ? 'round' : 'rounds'}</span>
+            <span class="meta-info">${c.duration} min${c.rounds ? ` • ${c.rounds} ${c.rounds === 1 ? 'round' : 'rounds'}` : ''}</span>
           </div>
           <div class="description">${c.description}</div>
         </div>
@@ -1135,16 +1234,20 @@ function renderPreview() {
   const app = document.getElementById('app');
 
   const exercisesToShow = c.continuousRound ? c.workExercises : c.exercises;
-  const structureLabel = c.continuousRound ? 'Cycle Through These' : 'Round Structure';
+  const structureLabel = c.continuousRound ? 'Exercises Per Round' : 'Round Structure';
+
+  const roundsDisplay = c.rounds
+    ? `🔁 ${c.rounds} ${c.rounds === 1 ? 'round' : 'rounds'}`
+    : `🔁 Self-paced`;
 
   app.innerHTML = `
     <div class="preview">
       <div class="preview-header">
         <button class="back-btn" onclick="goHome()">‹ Back</button>
-        <h1>${c.name}${c.amrap ? '<span class="amrap-badge">AMRAP</span>' : ''}${c.continuousRound ? '<span class="amrap-badge">CONTINUOUS</span>' : ''}</h1>
+        <h1>${c.name}${c.amrap ? '<span class="amrap-badge">AMRAP</span>' : ''}${c.continuousRound ? '<span class="amrap-badge">AMRAP</span>' : ''}</h1>
         <div class="stats">
           <span>⏱ ${c.duration} min</span>
-          <span>🔁 ${c.rounds} ${c.rounds === 1 ? 'round' : 'rounds'}</span>
+          <span>${roundsDisplay}</span>
           <span>💪 ${c.difficulty}</span>
         </div>
         <button class="start-btn-top" onclick="startWorkout()">Start Workout</button>
@@ -1160,7 +1263,7 @@ function renderPreview() {
           ${exercisesToShow.map(ex => `
             <div class="exercise-item">
               <div>${ex.name}${ex.detail ? ` <span style="color:#888;font-size:13px">• ${ex.detail}</span>` : ''}</div>
-              <div class="duration">${ex.mode === 'amrap' ? 'Tap Next' : (c.continuousRound ? 'Tap Next' : ex.duration + 's')}</div>
+              <div class="duration">${ex.mode === 'amrap' ? 'Tap Next' : (c.continuousRound ? '—' : ex.duration + 's')}</div>
             </div>
           `).join('')}
           ${c.continuousRound ? `
@@ -1195,44 +1298,57 @@ function startWorkout() {
 
   const c = state.circuit;
   state.exercises = [];
-
-  if (c.warmup) {
-    state.exercises.push({ ...c.warmup, round: 0, isWarmup: true });
-  }
-
-  if (c.continuousRound) {
-    // Continuous round mode: one "round marker" per round + round rest between
-    for (let r = 1; r <= c.rounds; r++) {
-      state.exercises.push({
-        name: 'CONTINUOUS_ROUND',
-        duration: c.roundDuration,
-        type: 'work',
-        continuousRound: true,
-        round: r,
-      });
-      // Add round rest after all rounds except the last
-      if (r < c.rounds && c.roundRest) {
-        state.exercises.push({ ...c.roundRest, round: r });
-      }
-    }
-  } else {
-    // Standard mode: flatten exercises across rounds
-    for (let r = 1; r <= c.rounds; r++) {
-      c.exercises.forEach(ex => {
-        state.exercises.push({ ...ex, round: r });
-      });
-    }
-  }
-
-  state.currentExerciseIndex = 0;
-  state.workExerciseIndex = 0;
+  state.completedRounds = 0;
   state.currentRound = 1;
-  state.timeRemaining = state.exercises[0].duration;
-  state.totalTimeRemaining = state.exercises.reduce((sum, ex) => sum + ex.duration, 0);
   state.isPaused = false;
   state.workoutStartTime = Date.now();
   state.screen = 'workout';
   state.spokenCues = new Set();
+
+  if (c.continuousRound) {
+    // New continuous round flow: warmup, then round/rest cycles managed by phase
+    state.phase = 'warmup';
+    if (c.totalDuration) state.workoutTimeRemaining = c.totalDuration;
+    if (c.roundDuration) state.roundTimeRemaining = c.roundDuration;
+
+    if (c.warmup) {
+      state.timeRemaining = c.warmup.duration;
+      state.totalTimeRemaining = c.warmup.duration + (c.totalDuration || (c.roundDuration * c.rounds));
+    } else {
+      // Skip straight to round
+      state.timeRemaining = c.roundDuration || c.totalDuration;
+      state.totalTimeRemaining = c.totalDuration || (c.roundDuration * c.rounds);
+      state.phase = 'round';
+    }
+
+    renderWorkout();
+    startTimer();
+    playStartBeep();
+
+    setTimeout(() => {
+      if (state.phase === 'warmup') {
+        speak(`Let's warm up. Get ready.`, true);
+      } else {
+        speak(`Round 1, go!`, true);
+      }
+    }, 400);
+    return;
+  }
+
+  // Standard mode
+  state.phase = 'standard';
+  if (c.warmup) {
+    state.exercises.push({ ...c.warmup, round: 0, isWarmup: true });
+  }
+  for (let r = 1; r <= c.rounds; r++) {
+    c.exercises.forEach(ex => {
+      state.exercises.push({ ...ex, round: r });
+    });
+  }
+
+  state.currentExerciseIndex = 0;
+  state.timeRemaining = state.exercises[0].duration;
+  state.totalTimeRemaining = state.exercises.reduce((sum, ex) => sum + ex.duration, 0);
 
   renderWorkout();
   startTimer();
@@ -1240,26 +1356,73 @@ function startWorkout() {
 
   const firstEx = state.exercises[0];
   setTimeout(() => {
-    // For continuous rounds starting fresh, announce the first work exercise
-    if (firstEx.continuousRound) {
-      const workEx = { ...c.workExercises[0], type: 'work' };
-      speak(getExerciseAnnouncement(workEx, true), true);
-    } else {
-      speak(getExerciseAnnouncement(firstEx, true), true);
-    }
+    speak(getExerciseAnnouncement(firstEx, true), true);
   }, 400);
+}
+
+function startRound() {
+  const c = state.circuit;
+  state.phase = 'round';
+  state.spokenCues = new Set();
+  if (c.roundDuration) {
+    state.roundTimeRemaining = c.roundDuration;
+    state.timeRemaining = c.roundDuration;
+  } else if (c.totalDuration) {
+    state.timeRemaining = state.workoutTimeRemaining;
+  }
+  playStartBeep();
+  vibrate([200]);
+  renderWorkout();
+
+  const roundText = c.rounds && state.currentRound === c.rounds
+    ? 'Final round, go!'
+    : `Round ${state.currentRound}, go!`;
+  setTimeout(() => speak(roundText, true), 300);
+}
+
+function completeRound() {
+  const c = state.circuit;
+  state.completedRounds++;
+
+  // 5-Min Blaster: check if all rounds done
+  if (c.rounds && state.completedRounds >= c.rounds) {
+    completeWorkout();
+    return;
+  }
+
+  // Start rest
+  startRest();
+}
+
+function startRest() {
+  const c = state.circuit;
+  state.phase = 'rest';
+  state.restTimeRemaining = c.roundRest.duration;
+  state.timeRemaining = c.roundRest.duration;
+  state.spokenCues = new Set();
+  playRestBeep();
+  vibrate([100, 50, 100]);
+  renderWorkout();
+  setTimeout(() => speak(`Round ${state.completedRounds} done. Take a rest.`, true), 300);
 }
 
 function startTimer() {
   if (state.timerInterval) clearInterval(state.timerInterval);
   state.timerInterval = setInterval(() => {
     if (state.isPaused) return;
+
+    // Continuous round handling
+    if (state.circuit && state.circuit.continuousRound) {
+      tickContinuousRound();
+      return;
+    }
+
+    // Standard workout tick
     state.timeRemaining--;
     state.totalTimeRemaining--;
 
     checkVoiceCues();
 
-    // Countdown beeps at 5, 4, 3, 2, 1
     if (state.timeRemaining <= 5 && state.timeRemaining > 0) {
       playCountdownBeep();
     }
@@ -1270,6 +1433,78 @@ function startTimer() {
       updateTimerDisplay();
     }
   }, 1000);
+}
+
+function tickContinuousRound() {
+  const c = state.circuit;
+
+  if (state.phase === 'warmup') {
+    state.timeRemaining--;
+    state.totalTimeRemaining--;
+    if (state.timeRemaining <= 5 && state.timeRemaining > 0) {
+      playCountdownBeep();
+    }
+    updateTimerDisplay();
+    if (state.timeRemaining <= 0) {
+      startRound();
+    }
+    return;
+  }
+
+  if (state.phase === 'round') {
+    state.totalTimeRemaining--;
+    if (c.totalDuration) {
+      state.workoutTimeRemaining--;
+      state.timeRemaining = state.workoutTimeRemaining;
+      if (state.workoutTimeRemaining <= 0) {
+        completeWorkout();
+        return;
+      }
+    } else if (c.roundDuration) {
+      state.roundTimeRemaining--;
+      state.timeRemaining = state.roundTimeRemaining;
+      if (state.roundTimeRemaining <= 0) {
+        // Auto end round when timer runs out
+        completeRound();
+        return;
+      }
+    }
+    updateTimerDisplay();
+    return;
+  }
+
+  if (state.phase === 'rest') {
+    state.restTimeRemaining--;
+    state.timeRemaining = state.restTimeRemaining;
+    state.totalTimeRemaining--;
+
+    // For BW AMRAP, workout timer keeps counting during rest
+    if (c.totalDuration) {
+      state.workoutTimeRemaining--;
+    }
+
+    // Countdown beeps + voice for last 5 seconds
+    if (state.restTimeRemaining >= 1 && state.restTimeRemaining <= 5) {
+      if (!state.spokenCues.has('rest' + state.restTimeRemaining)) {
+        playCountdownBeep();
+        speak(String(state.restTimeRemaining));
+        state.spokenCues.add('rest' + state.restTimeRemaining);
+      }
+    }
+
+    updateTimerDisplay();
+
+    // Check if workout timer ran out during rest (BW AMRAP)
+    if (c.totalDuration && state.workoutTimeRemaining <= 0) {
+      completeWorkout();
+      return;
+    }
+
+    if (state.restTimeRemaining <= 0) {
+      state.currentRound++;
+      startRound();
+    }
+  }
 }
 
 function checkVoiceCues() {
@@ -1310,11 +1545,6 @@ function nextExercise() {
   state.currentRound = nextEx.round || state.currentRound;
   state.timeRemaining = nextEx.duration;
 
-  // Reset work exercise cycling for new continuous round
-  if (nextEx.continuousRound) {
-    state.workExerciseIndex = 0;
-  }
-
   const isNewRound = nextEx.round && nextEx.round > previousRound && nextEx.round > 0;
 
   if (nextEx.type === 'rest') {
@@ -1329,17 +1559,12 @@ function nextExercise() {
 
   // Voice announcements
   setTimeout(() => {
-    // For continuous rounds, announce the first work exercise instead of "CONTINUOUS_ROUND"
-    const announceEx = nextEx.continuousRound
-      ? { ...state.circuit.workExercises[0], type: 'work' }
-      : nextEx;
-
     if (isNewRound && nextEx.type !== 'rest') {
       const roundText = nextEx.round === state.circuit.rounds ? 'Final round' : `Round ${nextEx.round}`;
       speak(roundText, true);
-      setTimeout(() => speak(getExerciseAnnouncement(announceEx)), 900);
+      setTimeout(() => speak(getExerciseAnnouncement(nextEx)), 900);
     } else {
-      speak(getExerciseAnnouncement(announceEx), true);
+      speak(getExerciseAnnouncement(nextEx), true);
     }
   }, 300);
 }
@@ -1359,22 +1584,11 @@ function skipExercise() {
   nextExercise();
 }
 
-function amrapNext() {
-  const currentEx = state.exercises[state.currentExerciseIndex];
-
-  // Continuous round mode: cycle to next work exercise, keep timer running
-  if (currentEx.continuousRound) {
-    state.workExerciseIndex = (state.workExerciseIndex + 1) % state.circuit.workExercises.length;
-    playStartBeep();
-    vibrate([100]);
-    renderWorkout();
-    const workEx = { ...state.circuit.workExercises[state.workExerciseIndex], type: 'work' };
-    speak(getExerciseAnnouncement(workEx), true);
-    return;
+function handleDone() {
+  // User tapped Done to end the current round
+  if (state.phase === 'round') {
+    completeRound();
   }
-
-  // Standard AMRAP: advance to next exercise
-  nextExercise();
 }
 
 function quitWorkout() {
@@ -1387,9 +1601,16 @@ function quitWorkout() {
 }
 
 function renderWorkout() {
+  const c = state.circuit;
+
+  // Continuous round dedicated renderer
+  if (c.continuousRound) {
+    renderContinuousRoundWorkout();
+    return;
+  }
+
   const currentEx = state.exercises[state.currentExerciseIndex];
   const nextEx = state.exercises[state.currentExerciseIndex + 1];
-  const c = state.circuit;
 
   const totalDuration = state.exercises.reduce((sum, ex) => sum + ex.duration, 0);
   const progress = ((totalDuration - state.totalTimeRemaining) / totalDuration) * 100;
@@ -1397,25 +1618,11 @@ function renderWorkout() {
   const roundText = currentEx.isWarmup ? 'Warm-Up' : `Round ${state.currentRound} of ${c.rounds}`;
   const timerClass = currentEx.type === 'rest' ? 'rest' : currentEx.type === 'warmup' ? 'warmup' : 'work';
 
-  // For continuous rounds, display the current work exercise info
-  let displayEx = currentEx;
-  if (currentEx.continuousRound) {
-    const workEx = c.workExercises[state.workExerciseIndex];
-    displayEx = { ...workEx, type: 'work' };
-  }
-
+  const displayEx = currentEx;
   const isAmrap = currentEx.mode === 'amrap';
-  const isContinuous = currentEx.continuousRound;
-  const showNextButton = isAmrap || isContinuous;
+  const showNextButton = isAmrap;
 
-  // For continuous rounds, show the next work exercise in the cycle
-  let nextDisplayName = null;
-  if (isContinuous) {
-    const nextWorkIdx = (state.workExerciseIndex + 1) % c.workExercises.length;
-    nextDisplayName = c.workExercises[nextWorkIdx].name;
-  } else if (nextEx) {
-    nextDisplayName = nextEx.name;
-  }
+  const nextDisplayName = nextEx ? nextEx.name : null;
 
   const app = document.getElementById('app');
   app.innerHTML = `
@@ -1430,7 +1637,6 @@ function renderWorkout() {
       <div class="exercise-name">${displayEx.name}</div>
       <div class="exercise-type">${displayEx.detail || displayEx.type}</div>
       ${isAmrap ? '<div class="amrap-hint">Do reps then tap Next</div>' : ''}
-      ${isContinuous ? '<div class="amrap-hint">Cycle through exercises · Timer keeps running</div>' : ''}
       <div class="timer-container">
         <div class="timer-circle">
           <div class="timer-text ${timerClass}" id="timerText">${formatTime(state.timeRemaining)}</div>
@@ -1439,13 +1645,124 @@ function renderWorkout() {
       </div>
       <div class="workout-controls">
         <button class="control-btn" id="pauseBtn" onclick="togglePause()">${state.isPaused ? 'Resume' : 'Pause'}</button>
-        ${showNextButton
-          ? `<button class="control-btn next-btn" onclick="amrapNext()">Next ›</button>`
-          : `<button class="control-btn primary" onclick="skipExercise()">Skip</button>`
-        }
+        <button class="control-btn primary" onclick="skipExercise()">Skip</button>
       </div>
     </div>
   `;
+}
+
+function renderContinuousRoundWorkout() {
+  const c = state.circuit;
+  const app = document.getElementById('app');
+
+  // Calculate progress based on time
+  const totalDuration = c.totalDuration || (c.roundDuration * c.rounds + (c.roundRest.duration * (c.rounds - 1)));
+  const progress = ((totalDuration - state.totalTimeRemaining) / totalDuration) * 100;
+
+  // Round display text
+  let roundText;
+  if (state.phase === 'warmup') {
+    roundText = 'Warm-Up';
+  } else if (c.rounds) {
+    roundText = `Round ${state.currentRound} of ${c.rounds}`;
+  } else {
+    roundText = `Round ${state.currentRound}`;
+  }
+
+  // Rest phase
+  if (state.phase === 'rest') {
+    app.innerHTML = `
+      <div class="workout continuous-rest">
+        <div class="workout-header">
+          <div class="round-info">Round ${state.completedRounds} done</div>
+          <button class="quit-btn" onclick="quitWorkout()">End</button>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: ${progress}%"></div>
+        </div>
+        <div class="rest-container">
+          <div class="rest-label">REST</div>
+          <div class="timer-circle rest-circle">
+            <div class="timer-text rest" id="timerText">${formatTime(state.timeRemaining)}</div>
+          </div>
+          <div class="next-up">Next: <span>Round ${state.currentRound + 1}</span></div>
+        </div>
+        <div class="workout-controls">
+          <button class="control-btn" id="pauseBtn" onclick="togglePause()">${state.isPaused ? 'Resume' : 'Pause'}</button>
+          <button class="control-btn primary" onclick="skipRest()">Skip Rest</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  // Warmup phase
+  if (state.phase === 'warmup') {
+    app.innerHTML = `
+      <div class="workout">
+        <div class="workout-header">
+          <div class="round-info">${roundText}</div>
+          <button class="quit-btn" onclick="quitWorkout()">End</button>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: ${progress}%"></div>
+        </div>
+        <div class="exercise-name">Warm-Up</div>
+        <div class="exercise-type">Get Ready</div>
+        <div class="timer-container">
+          <div class="timer-circle">
+            <div class="timer-text warmup" id="timerText">${formatTime(state.timeRemaining)}</div>
+          </div>
+        </div>
+        <div class="workout-controls">
+          <button class="control-btn" id="pauseBtn" onclick="togglePause()">${state.isPaused ? 'Resume' : 'Pause'}</button>
+          <button class="control-btn primary" onclick="skipExercise()">Skip</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  // Round phase - show all exercises + Done button
+  const timerLabel = c.totalDuration ? 'Time Left' : 'Round Time';
+
+  app.innerHTML = `
+    <div class="workout continuous-round">
+      <div class="workout-header">
+        <div class="round-info">${roundText}</div>
+        <button class="quit-btn" onclick="quitWorkout()">End</button>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: ${progress}%"></div>
+      </div>
+      <div class="round-timer-block">
+        <div class="round-timer-label">${timerLabel}</div>
+        <div class="round-timer" id="timerText">${formatTime(state.timeRemaining)}</div>
+      </div>
+      <div class="round-exercise-list">
+        ${c.workExercises.map((ex, i) => `
+          <div class="round-exercise">
+            <div class="round-ex-number">${i + 1}</div>
+            <div class="round-ex-content">
+              <div class="round-ex-name">${ex.name}</div>
+              ${ex.detail ? `<div class="round-ex-detail">${ex.detail}</div>` : ''}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="workout-controls">
+        <button class="control-btn" id="pauseBtn" onclick="togglePause()">${state.isPaused ? 'Resume' : 'Pause'}</button>
+        <button class="control-btn done-btn" onclick="handleDone()">Done ✓</button>
+      </div>
+    </div>
+  `;
+}
+
+function skipRest() {
+  if (state.phase !== 'rest') return;
+  state.restTimeRemaining = 0;
+  state.currentRound++;
+  startRound();
 }
 
 function updateTimerDisplay() {
@@ -1455,7 +1772,14 @@ function updateTimerDisplay() {
     if (state.timeRemaining <= 5 && state.timeRemaining > 0) timerText.classList.add('pulse');
     else timerText.classList.remove('pulse');
   }
-  const totalDuration = state.exercises.reduce((sum, ex) => sum + ex.duration, 0);
+  const c = state.circuit;
+  let totalDuration;
+  if (c && c.continuousRound) {
+    totalDuration = c.totalDuration || (c.roundDuration * c.rounds + (c.roundRest.duration * (c.rounds - 1)));
+    if (c.warmup) totalDuration += c.warmup.duration;
+  } else {
+    totalDuration = state.exercises.reduce((sum, ex) => sum + ex.duration, 0);
+  }
   const progress = ((totalDuration - state.totalTimeRemaining) / totalDuration) * 100;
   const progressFill = document.querySelector('.progress-fill');
   if (progressFill) progressFill.style.width = progress + '%';
@@ -1481,24 +1805,30 @@ function completeWorkout() {
   const minutes = Math.floor(duration / 60);
   const seconds = duration % 60;
 
+  const c = state.circuit;
+  const isContinuous = c.continuousRound;
+  const roundsDisplay = isContinuous
+    ? (c.rounds ? `${state.completedRounds} / ${c.rounds}` : `${state.completedRounds}`)
+    : `${c.rounds} / ${c.rounds}`;
+
   const app = document.getElementById('app');
   app.innerHTML = `
     <div class="complete">
       <div class="celebration">🎉</div>
       <h1>Workout Complete!</h1>
-      <div class="subtitle">${state.circuit.name}</div>
+      <div class="subtitle">${c.name}</div>
       <div class="complete-stats">
         <div class="stat-row">
           <span class="label">Duration</span>
           <span class="value">${minutes}:${seconds.toString().padStart(2, '0')}</span>
         </div>
         <div class="stat-row">
-          <span class="label">Rounds</span>
-          <span class="value">${state.circuit.rounds} / ${state.circuit.rounds}</span>
+          <span class="label">Rounds ${isContinuous && !c.rounds ? 'Completed' : ''}</span>
+          <span class="value">${roundsDisplay}</span>
         </div>
         <div class="stat-row">
           <span class="label">Difficulty</span>
-          <span class="value" style="text-transform:capitalize">${state.circuit.difficulty}</span>
+          <span class="value" style="text-transform:capitalize">${c.difficulty}</span>
         </div>
       </div>
       <button class="done-btn" onclick="goHome()">Done</button>
