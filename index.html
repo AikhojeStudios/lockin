@@ -491,14 +491,43 @@
     flex: 1;
   }
   .round-ex-name {
-    font-size: 17px;
-    font-weight: 700;
+    font-size: 16px;
+    font-weight: 600;
+    color: #ccc;
     line-height: 1.2;
   }
   .round-ex-detail {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 800;
+    margin-top: 4px;
+    letter-spacing: 0.3px;
+  }
+
+  /* Global timer strip (shown during rest for BW AMRAP) */
+  .global-timer-strip {
+    background: #1c1c1e;
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 3px solid #0a84ff;
+  }
+  .global-timer-label {
     color: #888;
-    font-size: 13px;
-    margin-top: 2px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+  }
+  .global-timer-value {
+    font-size: 24px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: #0a84ff;
+    letter-spacing: -0.5px;
   }
 
   /* Rest Screen */
@@ -1581,6 +1610,11 @@ function togglePause() {
 }
 
 function skipExercise() {
+  // For continuous rounds, skip warmup goes to first round
+  if (state.circuit && state.circuit.continuousRound && state.phase === 'warmup') {
+    startRound();
+    return;
+  }
   nextExercise();
 }
 
@@ -1671,6 +1705,7 @@ function renderContinuousRoundWorkout() {
 
   // Rest phase
   if (state.phase === 'rest') {
+    const showGlobal = c.totalDuration;
     app.innerHTML = `
       <div class="workout continuous-rest">
         <div class="workout-header">
@@ -1680,6 +1715,12 @@ function renderContinuousRoundWorkout() {
         <div class="progress-bar">
           <div class="progress-fill" style="width: ${progress}%"></div>
         </div>
+        ${showGlobal ? `
+          <div class="global-timer-strip">
+            <div class="global-timer-label">Workout Time Left</div>
+            <div class="global-timer-value" id="globalTimer">${formatTime(state.workoutTimeRemaining)}</div>
+          </div>
+        ` : ''}
         <div class="rest-container">
           <div class="rest-label">REST</div>
           <div class="timer-circle rest-circle">
@@ -1771,6 +1812,11 @@ function updateTimerDisplay() {
     timerText.textContent = formatTime(state.timeRemaining);
     if (state.timeRemaining <= 5 && state.timeRemaining > 0) timerText.classList.add('pulse');
     else timerText.classList.remove('pulse');
+  }
+  // Update global timer if present (rest phase in BW AMRAP)
+  const globalTimer = document.getElementById('globalTimer');
+  if (globalTimer && state.circuit && state.circuit.totalDuration) {
+    globalTimer.textContent = formatTime(state.workoutTimeRemaining);
   }
   const c = state.circuit;
   let totalDuration;
