@@ -364,6 +364,17 @@
     font-weight: 700;
     letter-spacing: 0.5px;
   }
+  .treadmill-badge {
+    display: inline-block;
+    background: #ff9f0a;
+    color: #000;
+    padding: 2px 6px;
+    border-radius: 5px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-left: 4px;
+  }
   .exercise-list h3 {
     font-size: 13px;
     color: #888;
@@ -674,6 +685,10 @@ const HOW_TO = {
   'push-day': 'Straight sets. Do the reps for each exercise, then take the built-in rest before the next. Complete 3 rounds of the full sequence.',
   'pull-day': 'Straight sets. Focus on controlled reps and full range of motion. Complete 3 rounds of the full sequence.',
   'legs-day': 'Straight sets. Focus on depth and form over speed. Legs get longer rest between exercises. Complete 3 rounds.',
+  'rockport-test': 'A fitness test to estimate your VO2 max. Warm up 5 min, then walk exactly 1 mile as fast as possible. Note your finish time AND heart rate immediately after. Use an online Rockport calculator with your time, HR, age, weight, and sex to get your VO2 max score. Tap Skip when you complete your 1 mile.',
+  'sprint-intervals': 'Alternates 30-second sprints with 90-second recovery walks for 8 rounds. During sprints, push near-maximum effort (RPE 8-9, speed 8-10 mph). During recovery, walk slowly to bring heart rate down. Excellent for VO2 max improvement and fat loss. Adjust sprint speed to your fitness level.',
+  'pyramid-intervals': 'Progressive interval training that builds up in duration then comes back down (30s → 60s → 90s → 120s → 90s → 60s → 30s of hard pace, with 90s recovery between each). Teaches your body to sustain increasing effort. Great for pacing awareness and cardiovascular endurance.',
+  'soccer-treadmill': 'Mimics soccer game demands with mixed sprint/jog/walk cycles. Each round: burst sprint, sustained jog, another quick sprint, then recovery walk. Repeats 6 times for match-ready fitness. Great for maintaining sport-specific cardio.',
 };
 
 function getHowTo(id) {
@@ -1011,6 +1026,82 @@ const CIRCUITS = [
       { name: 'Rest', duration: 45, type: 'rest' },
     ],
   },
+  {
+    id: 'rockport-test',
+    name: 'Rockport Walk Test',
+    difficulty: 'beginner',
+    duration: 25,
+    focus: 'cardio',
+    treadmill: true,
+    description: 'Fitness test to estimate your VO2 max. Walk 1 mile as fast as possible and note your time and heart rate.',
+    rounds: 1,
+    warmup: { name: 'Warm-Up Walk', detail: 'Easy pace • speed 3.0-3.5 mph', duration: 300, type: 'warmup' },
+    exercises: [
+      { name: 'Walk 1 Mile Fast', detail: 'Speed 4.0-4.5 mph • Tap Skip when 1 mile done', duration: 1200, type: 'work' },
+    ],
+    cooldown: { name: 'Cool-Down Walk', detail: 'Easy pace • speed 3.0 mph', duration: 300, type: 'rest' },
+  },
+  {
+    id: 'sprint-intervals',
+    name: 'Sprint Intervals (HIIT)',
+    difficulty: 'advanced',
+    duration: 26,
+    focus: 'cardio',
+    treadmill: true,
+    description: 'High-intensity intervals for VO2 max and fat loss. 8 rounds of sprints with active recovery.',
+    rounds: 8,
+    warmup: { name: 'Warm-Up Walk', detail: 'Speed 3.5-4 mph', duration: 300, type: 'warmup' },
+    exercises: [
+      { name: 'Sprint', detail: 'Speed 8-10 mph • ALL OUT', duration: 30, type: 'work' },
+      { name: 'Recovery Walk', detail: 'Speed 3.5 mph', duration: 90, type: 'rest' },
+    ],
+    cooldown: { name: 'Cool-Down Walk', detail: 'Easy pace • speed 3.0 mph', duration: 300, type: 'rest' },
+  },
+  {
+    id: 'pyramid-intervals',
+    name: 'Pyramid Intervals',
+    difficulty: 'intermediate',
+    duration: 27,
+    focus: 'cardio',
+    treadmill: true,
+    description: 'Progressive intervals that build up (30s → 120s) then come back down. Great for pacing and endurance.',
+    rounds: 1,
+    warmup: { name: 'Warm-Up Walk', detail: 'Speed 3.5-4 mph', duration: 300, type: 'warmup' },
+    exercises: [
+      { name: 'Push', detail: '30 sec • Speed 6-7 mph', duration: 30, type: 'work' },
+      { name: 'Recovery', detail: 'Speed 3.5 mph', duration: 90, type: 'rest' },
+      { name: 'Push', detail: '60 sec • Speed 6-7 mph', duration: 60, type: 'work' },
+      { name: 'Recovery', detail: 'Speed 3.5 mph', duration: 90, type: 'rest' },
+      { name: 'Push', detail: '90 sec • Speed 6-7 mph', duration: 90, type: 'work' },
+      { name: 'Recovery', detail: 'Speed 3.5 mph', duration: 90, type: 'rest' },
+      { name: 'Push', detail: '120 sec • Speed 6-7 mph', duration: 120, type: 'work' },
+      { name: 'Recovery', detail: 'Speed 3.5 mph', duration: 90, type: 'rest' },
+      { name: 'Push', detail: '90 sec • Speed 6-7 mph', duration: 90, type: 'work' },
+      { name: 'Recovery', detail: 'Speed 3.5 mph', duration: 90, type: 'rest' },
+      { name: 'Push', detail: '60 sec • Speed 6-7 mph', duration: 60, type: 'work' },
+      { name: 'Recovery', detail: 'Speed 3.5 mph', duration: 90, type: 'rest' },
+      { name: 'Push', detail: '30 sec • Speed 6-7 mph', duration: 30, type: 'work' },
+    ],
+    cooldown: { name: 'Cool-Down Walk', detail: 'Easy pace • speed 3.0 mph', duration: 300, type: 'rest' },
+  },
+  {
+    id: 'soccer-treadmill',
+    name: 'Soccer Prep (Treadmill)',
+    difficulty: 'intermediate',
+    duration: 30,
+    focus: 'cardio',
+    treadmill: true,
+    description: 'Mimics soccer game demands with sprint/jog/walk cycles. 6 rounds for match-ready cardio fitness.',
+    rounds: 6,
+    warmup: { name: 'Warm-Up Jog', detail: 'Speed 4-5 mph', duration: 300, type: 'warmup' },
+    exercises: [
+      { name: 'Sprint', detail: 'Speed 8+ mph', duration: 30, type: 'work' },
+      { name: 'Jog', detail: 'Speed 5-6 mph', duration: 60, type: 'work' },
+      { name: 'Sprint', detail: 'Speed 8+ mph', duration: 20, type: 'work' },
+      { name: 'Walk', detail: 'Speed 3.5 mph', duration: 90, type: 'rest' },
+    ],
+    cooldown: { name: 'Cool-Down Walk', detail: 'Easy pace • speed 3.0 mph', duration: 300, type: 'rest' },
+  },
 ];
 
 // ============================================================
@@ -1047,6 +1138,7 @@ let state = {
 };
 
 function getCircuitType(c) {
+  if (c.treadmill) return 'treadmill';
   if (c.continuousRound || c.amrap) return 'amrap';
   return 'circuits';
 }
@@ -1218,6 +1310,7 @@ function getRepsPhrase(exercise) {
 }
 
 function getExerciseAnnouncement(exercise, isFirst = false) {
+  if (exercise.isCooldown) return 'Cool down. Easy walk to finish.';
   if (exercise.type === 'rest') {
     if (exercise.name === 'Round Rest' || exercise.name === 'Long Rest') return 'Take a rest';
     return 'Rest';
@@ -1267,6 +1360,7 @@ function renderHome() {
     { value: 'all', label: 'All' },
     { value: 'circuits', label: 'Circuits' },
     { value: 'amrap', label: 'AMRAP' },
+    { value: 'treadmill', label: 'Treadmill' },
     { value: 'programs', label: 'Programs' },
   ];
   const difficultyOptions = [
@@ -1336,7 +1430,7 @@ function renderHome() {
         `).join('')}
         ${filteredCircuits.map(c => `
           <div class="circuit-card" onclick="selectCircuit('${c.id}')">
-            <h2>${c.name}${c.amrap ? '<span class="amrap-badge">AMRAP</span>' : ''}${c.continuousRound ? '<span class="amrap-badge">AMRAP</span>' : ''}</h2>
+            <h2>${c.name}${c.amrap ? '<span class="amrap-badge">AMRAP</span>' : ''}${c.continuousRound ? '<span class="amrap-badge">AMRAP</span>' : ''}${c.treadmill ? '<span class="treadmill-badge">TREADMILL</span>' : ''}</h2>
             <div class="meta">
               <span class="difficulty diff-${c.difficulty}">${c.difficulty}</span>
               <span class="meta-info">${c.duration} min${c.rounds ? ` • ${c.rounds} ${c.rounds === 1 ? 'round' : 'rounds'}` : ''}</span>
@@ -1418,7 +1512,7 @@ function renderPreview() {
     <div class="preview">
       <div class="preview-header">
         <button class="back-btn" onclick="goHome()">‹ Back</button>
-        <h1>${c.name}${c.amrap ? '<span class="amrap-badge">AMRAP</span>' : ''}${c.continuousRound ? '<span class="amrap-badge">AMRAP</span>' : ''}</h1>
+        <h1>${c.name}${c.amrap ? '<span class="amrap-badge">AMRAP</span>' : ''}${c.continuousRound ? '<span class="amrap-badge">AMRAP</span>' : ''}${c.treadmill ? '<span class="treadmill-badge">TREADMILL</span>' : ''}</h1>
         <div class="stats">
           <span>⏱ ${c.duration} min</span>
           <span>${roundsDisplay}</span>
@@ -1444,6 +1538,12 @@ function renderPreview() {
             <div class="exercise-item" style="opacity:0.7">
               <div>Round Rest</div>
               <div class="duration">${c.roundRest.duration}s</div>
+            </div>
+          ` : ''}
+          ${c.cooldown && !c.continuousRound ? `
+            <div class="exercise-item" style="opacity:0.7">
+              <div>${c.cooldown.name}${c.cooldown.detail ? ` <span style="color:#888;font-size:13px">• ${c.cooldown.detail}</span>` : ''}</div>
+              <div class="duration">${c.cooldown.duration}s</div>
             </div>
           ` : ''}
         </div>
@@ -1518,6 +1618,9 @@ function startWorkout() {
     c.exercises.forEach(ex => {
       state.exercises.push({ ...ex, round: r });
     });
+  }
+  if (c.cooldown) {
+    state.exercises.push({ ...c.cooldown, round: 0, isCooldown: true });
   }
 
   state.currentExerciseIndex = 0;
@@ -1794,7 +1897,7 @@ function renderWorkout() {
   const totalDuration = state.exercises.reduce((sum, ex) => sum + ex.duration, 0);
   const progress = ((totalDuration - state.totalTimeRemaining) / totalDuration) * 100;
 
-  const roundText = currentEx.isWarmup ? 'Warm-Up' : `Round ${state.currentRound} of ${c.rounds}`;
+  const roundText = currentEx.isWarmup ? 'Warm-Up' : currentEx.isCooldown ? 'Cool-Down' : `Round ${state.currentRound} of ${c.rounds}`;
   const timerClass = currentEx.type === 'rest' ? 'rest' : currentEx.type === 'warmup' ? 'warmup' : 'work';
 
   const displayEx = currentEx;
