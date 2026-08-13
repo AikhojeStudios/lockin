@@ -690,6 +690,7 @@ const HOW_TO = {
   'pyramid-intervals': 'Progressive interval training that builds up in duration then comes back down (30s → 60s → 90s → 120s → 90s → 60s → 30s of hard pace, with 90s recovery between each). Teaches your body to sustain increasing effort. Great for pacing awareness and cardiovascular endurance.',
   'soccer-treadmill': 'Mimics soccer game demands with mixed sprint/jog/walk cycles. Each round: burst sprint, sustained jog, another quick sprint, then recovery walk. Repeats 6 times for match-ready fitness. Great for maintaining sport-specific cardio.',
   'posterior-chain': 'Targeted posterior chain work in 4 rounds. Each round hits glutes (KB swings, bridges), hamstrings (single-leg RDLs, reverse lunges), lower back (Superman holds), plus jump rope for cardio. Great for counteracting sitting posture, building explosive hip drive for soccer, and supporting spinal health. Use a kettlebell for swings or substitute with jump squats.',
+  'rotator-cuff': 'Targets the small stabilizer muscles most people ignore: rotator cuff, rear delts, and serratus. 3 rounds of band work + bodyweight exercises. Great for shoulder health, posture, injury prevention, and supporting neck/disc health. Use a LIGHT resistance band (heavy load defeats the purpose). This is a maintenance workout — do 2-3x per week for shoulder longevity.',
 };
 
 function getHowTo(id) {
@@ -1048,6 +1049,30 @@ const CIRCUITS = [
       { name: 'Jump Rope', detail: '45 seconds', duration: 45, type: 'work' },
       { name: 'Rest', duration: 15, type: 'rest' },
       { name: 'Reverse Lunges', detail: '10 per leg', duration: 45, type: 'work' },
+      { name: 'Round Rest', duration: 60, type: 'rest' },
+    ],
+  },
+  {
+    id: 'rotator-cuff',
+    name: 'Rotator Cuff & Shoulder Health',
+    difficulty: 'beginner',
+    duration: 20,
+    focus: 'upper',
+    description: 'Small stabilizer muscles that protect your shoulders. Band-based work for rotator cuff, rear delts, and serratus. Great for injury prevention and posture.',
+    rounds: 3,
+    warmup: { name: 'Warm-Up', detail: 'Arm circles + shoulder rolls', duration: 60, type: 'warmup' },
+    exercises: [
+      { name: 'Band Pull-Aparts', detail: '20 reps, controlled', duration: 40, type: 'work' },
+      { name: 'Rest', duration: 15, type: 'rest' },
+      { name: 'External Rotations', detail: '12 per arm (band)', duration: 60, type: 'work' },
+      { name: 'Rest', duration: 15, type: 'rest' },
+      { name: 'Face Pulls', detail: '15 reps (band)', duration: 40, type: 'work' },
+      { name: 'Rest', duration: 15, type: 'rest' },
+      { name: 'Wall Angels', detail: '10 slow reps', duration: 45, type: 'work' },
+      { name: 'Rest', duration: 15, type: 'rest' },
+      { name: 'Serratus Push-Ups', detail: '12 reps', duration: 30, type: 'work' },
+      { name: 'Rest', duration: 15, type: 'rest' },
+      { name: 'Dead Hang', detail: '30 seconds', duration: 30, type: 'work' },
       { name: 'Round Rest', duration: 60, type: 'rest' },
     ],
   },
