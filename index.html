@@ -689,6 +689,7 @@ const HOW_TO = {
   'sprint-intervals': 'Alternates 30-second sprints with 90-second recovery walks for 8 rounds. During sprints, push near-maximum effort (RPE 8-9, speed 8-10 mph). During recovery, walk slowly to bring heart rate down. Excellent for VO2 max improvement and fat loss. Adjust sprint speed to your fitness level.',
   'pyramid-intervals': 'Progressive interval training that builds up in duration then comes back down (30s → 60s → 90s → 120s → 90s → 60s → 30s of hard pace, with 90s recovery between each). Teaches your body to sustain increasing effort. Great for pacing awareness and cardiovascular endurance.',
   'soccer-treadmill': 'Mimics soccer game demands with mixed sprint/jog/walk cycles. Each round: burst sprint, sustained jog, another quick sprint, then recovery walk. Repeats 6 times for match-ready fitness. Great for maintaining sport-specific cardio.',
+  'posterior-chain': 'Targeted posterior chain work in 4 rounds. Each round hits glutes (KB swings, bridges), hamstrings (single-leg RDLs, reverse lunges), lower back (Superman holds), plus jump rope for cardio. Great for counteracting sitting posture, building explosive hip drive for soccer, and supporting spinal health. Use a kettlebell for swings or substitute with jump squats.',
 };
 
 function getHowTo(id) {
@@ -1024,6 +1025,30 @@ const CIRCUITS = [
       { name: 'Hollow Hold', duration: 30, type: 'work' },
       { name: 'Mountain Climbers', duration: 45, type: 'work' },
       { name: 'Rest', duration: 45, type: 'rest' },
+    ],
+  },
+  {
+    id: 'posterior-chain',
+    name: 'Posterior Chain Blaster',
+    difficulty: 'intermediate',
+    duration: 28,
+    focus: 'lower',
+    description: 'Targets glutes, hamstrings, lower back, and calves. 4 rounds hitting the powerhouse muscles most people neglect.',
+    rounds: 4,
+    warmup: { name: 'Warm-Up', detail: 'Hip circles + leg swings', duration: 60, type: 'warmup' },
+    exercises: [
+      { name: 'Kettlebell Swings', detail: '45 sec explosive hip drive', duration: 45, type: 'work' },
+      { name: 'Rest', duration: 15, type: 'rest' },
+      { name: 'Glute Bridges', detail: '15 reps', duration: 30, type: 'work' },
+      { name: 'Rest', duration: 15, type: 'rest' },
+      { name: 'Single-Leg RDLs', detail: '8 per leg, slow & controlled', duration: 60, type: 'work' },
+      { name: 'Rest', duration: 15, type: 'rest' },
+      { name: 'Superman Holds', detail: '30 seconds', duration: 30, type: 'work' },
+      { name: 'Rest', duration: 15, type: 'rest' },
+      { name: 'Jump Rope', detail: '45 seconds', duration: 45, type: 'work' },
+      { name: 'Rest', duration: 15, type: 'rest' },
+      { name: 'Reverse Lunges', detail: '10 per leg', duration: 45, type: 'work' },
+      { name: 'Round Rest', duration: 60, type: 'rest' },
     ],
   },
   {
