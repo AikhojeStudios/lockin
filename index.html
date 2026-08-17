@@ -473,6 +473,19 @@
   .timer-text.warmup { color: #ff9f0a; }
   .next-up { color: #888; font-size: 15px; margin-bottom: 20px; }
   .next-up span { color: #fff; font-weight: 600; }
+  .add-rest-btn {
+    background: rgba(48, 209, 88, 0.12);
+    color: #30d158;
+    border: 1px solid rgba(48, 209, 88, 0.3);
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 16px;
+    align-self: center;
+  }
+  .add-rest-btn:active { opacity: 0.6; transform: scale(0.95); }
   .workout-controls { display: flex; gap: 12px; }
   .control-btn {
     flex: 1;
@@ -2194,6 +2207,19 @@ function skipExercise() {
   nextExercise();
 }
 
+function addRestTime(seconds) {
+  state.timeRemaining += seconds;
+  state.totalTimeRemaining += seconds;
+  if (state.circuit && state.circuit.continuousRound && state.phase === 'rest') {
+    state.restTimeRemaining += seconds;
+  }
+  // Reset countdown cues so they don't skip
+  state.spokenCues = new Set();
+  updateTimerDisplay();
+  playBeep(500, 0.1, 0.25);
+  vibrate([50]);
+}
+
 function handleDone() {
   // User tapped Done to end the current round
   if (state.phase === 'round') {
@@ -2252,6 +2278,7 @@ function renderWorkout() {
           <div class="timer-text ${timerClass}" id="timerText">${formatTime(state.timeRemaining)}</div>
         </div>
         ${nextDisplayName ? `<div class="next-up">Next: <span>${nextDisplayName}</span></div>` : ''}
+        ${currentEx.type === 'rest' ? `<button class="add-rest-btn" onclick="addRestTime(15)">+ 15 sec</button>` : ''}
       </div>
       <div class="workout-controls">
         <button class="control-btn" id="pauseBtn" onclick="togglePause()">${state.isPaused ? 'Resume' : 'Pause'}</button>
@@ -2303,6 +2330,7 @@ function renderContinuousRoundWorkout() {
             <div class="timer-text rest" id="timerText">${formatTime(state.timeRemaining)}</div>
           </div>
           <div class="next-up">Next: <span>Round ${state.currentRound + 1}</span></div>
+          <button class="add-rest-btn" onclick="addRestTime(15)">+ 15 sec</button>
         </div>
         <div class="workout-controls">
           <button class="control-btn" id="pauseBtn" onclick="togglePause()">${state.isPaused ? 'Resume' : 'Pause'}</button>
